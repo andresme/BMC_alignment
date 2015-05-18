@@ -108,6 +108,7 @@ void *workThread(void *id) {
 			newNode2->i = work->i;
 			newNode2->j = work->j + 1;
 			pthread_mutex_lock(&mutexDone);
+			pthread_mutex_lock(&mutexWork);
 			if (newNode1->i < TEST_SIZE && newNode1->j < TEST_SIZE
 					&& isInQueue(newNode1) == 0) {
 				addWorkNode(newNode1);
@@ -121,6 +122,7 @@ void *workThread(void *id) {
 				free(newNode2);
 			}
 			pthread_mutex_unlock(&mutexDone);
+			pthread_mutex_unlock(&mutexWork);
 		} else {
 			//LOG("thread: %d, no work to be done\n", (int ) id);
 		}
