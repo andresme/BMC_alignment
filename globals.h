@@ -1,7 +1,3 @@
-//
-// Created by andres on 5/30/15.
-//
-
 #ifndef ALIGNMENT_STRUCTS_H
 #define ALIGNMENT_STRUCTS_H
 
@@ -23,18 +19,28 @@ struct table_score {
     int **table;
 } typedef table_score;
 
-/*
- * gaps_free:
- *  0 = no free gaps
- *  1 = free gaps left
- *  2 = free gaps right
- *  3 = free gaps both
- * gap_start_penalty:
- *  0 = no start penalty
- *  1 = start penalty
- */
+typedef struct alignment {
+    char* v_string;
+    char* w_string;
+} ALIGNMENT;
+
+
+enum DIRECTION {
+    TOP,
+    LEFT,
+    TOP_LEFT,
+    NONE,
+} direction;
+
+enum GAP_TYPE {
+    free_left_free_right,
+    free_left_penalty_right,
+    penalty_left_free_right,
+    penalty_left_penalty_right,
+} gap_type;
+
 struct thread_data_t {
-    int thread_id, numThreads, imax, jmax, gaps_free, gap_start_penalty;
+    int thread_id, numThreads, imax, jmax;
 } typedef thread_data_t;
 
 struct array_max_t {
@@ -42,12 +48,13 @@ struct array_max_t {
     int max;
 } typedef array_max_t;
 
+pthread_mutex_t mutexStart;
 pthread_mutex_t mutexWait;
 pthread_cond_t condWait;
 int waitingThreads;
+int startedThreads;
 
-int **I_i;
-int **I_j;
+int **I_direction;
 int **H;
 
 int threads;
@@ -58,5 +65,6 @@ char *seq_v;
 char *seq_w;
 
 table_score score_table;
+ALIGNMENT string_alignment;
 
 #endif //ALIGNMENT_STRUCTS_H

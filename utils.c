@@ -30,13 +30,28 @@ array_max_t find_array_max(int temp[], int size) {
 
 int similarity_score(char a, char b) {
     if (a == b) {
-        return 1;
+        return score_table.match;
     } else {
-        return -1;
+        return score_table.missmatch;
     }
 }
 
-int init(){
+int initStart(int numThreads, char *v_string, char *w_string){
+    seq_v_size = (int) strlen(v_string);
+    seq_w_size = (int) strlen(w_string);
+
+    seq_v = (char *) malloc(seq_v_size + 1 * sizeof(char));
+    seq_w = (char *) malloc(seq_w_size + 1 * sizeof(char));
+
+    strcpy(seq_v, v_string) ;
+    strcpy(seq_w, w_string);
+
+    pthread_mutex_init(&mutexWait, NULL);
+    pthread_mutex_init(&mutexStart, NULL);
+    pthread_cond_init(&condWait, NULL);
+}
+
+int initMatrix(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
     int size_w = seq_w_size + 1;
     int size_v = seq_v_size + 1;
     H = (int **) malloc(size_w * sizeof(int *));
@@ -55,17 +70,49 @@ int init(){
     for(int i = 0; i < size_w; i++){
         for(int j = 0; j < size_v; j++){
             H[i][j] = 0;
+            if(i == 0){
+                switch(w_type){
+                       case free_left_free_right:
+                       case free_left_penalty_right:
+                           H[i][j] = 0;
+                        break;
+                       default:
+                           H[i][j] = j * score_table.gap;
+                        break;
+                }
+            }
+            if(j == 0){
+                switch(v_type){
+                    case penalty_left_free_right:
+                    case penalty_left_penalty_right:
+                        H[i][j] = i * score_table.gap;
+                        break;
+                    default:
+                        H[i][j] = 0;
+                        break;
+                }
+            }
+
         }
     }
 
-    I_i = (int **) malloc(size_w * sizeof(int *));
-    if(I_i == NULL){
+//    for(int i = 0; i < seq_w_size; i++){
+//        for(int j = 0; j < seq_v_size; j++){
+//            printf("%d\t", H[i][j]);
+//        }
+//        printf("\n");
+//    }
+//
+//    printf("----------------------\n");
+
+    I_direction = (int **) malloc(size_w * sizeof(int *));
+    if(I_direction == NULL){
         printf("could not allocate memory\n");
         return -1;
     }
     for(int i = 0; i < size_w; i++){
-        I_i[i] = (int *) malloc(size_v * sizeof(int));
-        if(I_i[i] == NULL){
+        I_direction[i] = (int *) malloc(size_v * sizeof(int));
+        if(I_direction[i] == NULL){
             printf("could not allocate memory\n");
             return -1;
         }
@@ -73,26 +120,14 @@ int init(){
 
     for(int i = 0; i < size_w; i++){
         for(int j = 0; j < size_v; j++){
-            I_i[i][j] = 0;
-        }
-    }
+            if(j == 0){
+                I_direction[i][j] = TOP;
+            } else if(i == 0){
+                I_direction[i][j] = LEFT;
+            } else {
+                I_direction[i][j] = NONE;
+            }
 
-    I_j = (int **) malloc(size_w * sizeof(int *));
-    if(I_j == NULL){
-        printf("could not allocate memory\n");
-        return -1;
-    }
-    for(int i = 0; i < size_w; i++){
-        I_j[i] = (int *) malloc(size_v * sizeof(int));
-        if(I_j[i] == NULL){
-            printf("could not allocate memory\n");
-            return -1;
-        }
-    }
-
-    for(int i = 0; i < size_w; i++){
-        for(int j = 0; j < size_v; j++){
-            I_j[i][j] = 0;
         }
     }
     return 1;
