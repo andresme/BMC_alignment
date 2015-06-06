@@ -43,7 +43,6 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     int j = max_j;
     int count = 0;
     while(i > 0 || j > 0){
-      printf("here\n");
         if(I_direction[i][j] == TOP_LEFT){
             i = i-1;
             j = j-1;
@@ -63,7 +62,7 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     j = max_j;
     int v_index = count-1;
     int w_index = count-1;
-    printf("count %d", count);
+
     while(i > 0 || j > 0){
         if(I_direction[i][j] == TOP_LEFT){
             string_alignment.v_string[v_index] = seq_v[j];
@@ -121,20 +120,21 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
 
     void *(*__start_routine)(void *) = p_NeedlemanWunsch;
 
-    int best_k_1 = INT_MAX;
-    current_k = initial_k;
-    while(best_k_1 > H[seq_w_size - 1][seq_v_size - 1]){
+    if(mode == k_band){
+      int best_k_1 = INT_MAX;
+      current_k = initial_k;
+      while(best_k_1 > H[seq_w_size - 1][seq_v_size - 1]){
+        init_k_band(v_type, w_type);
+        runThreads(__start_routine, threads, mode);
+
+        current_k += adjust_k;
+
+        best_k_1 = (2*current_k + seq_w_size - seq_v_size) * score_table.gap +
+          (seq_v_size - current_k) * score_table.match;
+
+      }
+    } else {
       runThreads(__start_routine, threads, mode);
-      current_k += adjust_k;
-
-      best_k_1 = (2*current_k + seq_w_size - seq_v_size) * score_table.gap +
-        (seq_v_size - current_k) * score_table.match;
-
-      // if(best_k_1 > H[seq_w_size - 1][seq_v_size - 1]){
-      //   clear(v_type, w_type);
-      // } else {
-      //   break;
-      // }
     }
 
     // printf("%d,%d = %d\n", seq_w_size - 1, seq_v_size - 1, H[seq_w_size - 1][seq_v_size - 1]);
@@ -142,12 +142,8 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
     pthread_mutex_destroy(&mutexWait);
     pthread_cond_destroy(&condWait);
 
-    for (int i = 0; i < seq_w_size; i++) {
-        for (int j = 0; j < seq_v_size; j++) {
-            printf("%d\t", H[i][j]);
-        }
-        printf("\n");
-    }
+    //printMatrix();
+
     getAlignment(v_type, w_type);
 }
 
@@ -187,7 +183,7 @@ void *p_SmithWaterman(void *ptr_to_tdata) {
     for (wave = 1; wave <= td->imax + td->numThreads - 1; wave++) {
         i = wave - td->thread_id;
         if (i >= 1 && i <= td->imax) {
-            for (j = tStart; j <= tEnd; j++) {
+            for (j = tStart; j < tEnd; j++) {
                 temp[0] = H[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]);
                 temp[1] = H[i - 1][j] - 2;
                 temp[2] = H[i][j - 1] - 2;
@@ -236,8 +232,8 @@ void *p_NeedlemanWunsch(void *ptr_to_tdata) {
     for (wave = 1; wave <= td->imax + td->numThreads - 1; wave++) {
         i = wave - td->thread_id;
         if (i >= 1 && i <= td->imax) {
-            for (j = tStart; j <= tEnd; j++) {
-                if(!shouldFill(i, j)){
+            for (j = tStart; j < tEnd; j++) {
+                if(!shouldFill(i, j) && td->mode == k_band){
                   continue;
                 }
                 temp[0] = H[i - 1][j - 1] != INT_MIN ? H[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]) : INT_MIN;

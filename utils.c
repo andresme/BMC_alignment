@@ -49,8 +49,11 @@ int initStart(int numThreads, char *v_string, char *w_string){
       exit(-1);
     }
 
-    strcpy(seq_v, v_string) ;
+    strcpy(seq_v, v_string);
     strcpy(seq_w, w_string);
+
+    printf("%s\n%s\n", v_string, w_string);
+    printf("%s\n%s\n", seq_v, seq_w);
 
     pthread_mutex_init(&mutexWait, NULL);
     pthread_mutex_init(&mutexStart, NULL);
@@ -160,6 +163,41 @@ bool shouldFill(int i, int j){
   } else {
     temp = seq_w_size - seq_v_size - current_k;
     return temp <= center && center <= current_k;
+  }
+}
+
+
+void init_k_band(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
+  int size_w = seq_w_size + 1;
+  int size_v = seq_v_size + 1;
+
+  for(int i = 0; i < size_w; i++){
+      for(int j = 0; j < size_v; j++){
+          H[i][j] = INT_MIN;
+          if(i == 0 && shouldFill(i, j)){
+              switch(w_type){
+                     case free_left_free_right:
+                     case free_left_penalty_right:
+                         H[i][j] = 0;
+                      break;
+                     default:
+                         H[i][j] = j * score_table.gap;
+                      break;
+              }
+          }
+          if(j == 0 && shouldFill(i, j)){
+              switch(v_type){
+                  case penalty_left_free_right:
+                  case penalty_left_penalty_right:
+                      H[i][j] = i * score_table.gap;
+                      break;
+                  default:
+                      H[i][j] = 0;
+                      break;
+              }
+          }
+
+      }
   }
 }
 

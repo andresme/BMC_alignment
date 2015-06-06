@@ -11,6 +11,6 @@ int initStart(int numThreads, char *v_string, char *w_string);
 int initMatrix(enum GAP_TYPE v_type, enum GAP_TYPE w_type);
 bool shouldFill(int i, int j);
 void clear(enum GAP_TYPE v_type, enum GAP_TYPE w_type);
-
+void init_k_band(enum GAP_TYPE v_type, enum GAP_TYPE w_type);
 
 #endif //ALIGNMENT_UTILS_H
