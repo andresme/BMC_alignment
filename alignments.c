@@ -1,7 +1,7 @@
 #include "alignments.h"
 #include <stdbool.h>
 
-struct alignment getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
+void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     int max_i = seq_w_size - 1;
     int max_j = seq_v_size - 1;
 

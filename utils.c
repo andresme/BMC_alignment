@@ -43,12 +43,18 @@ int initStart(int numThreads, char *v_string, char *w_string){
     seq_v = (char *) malloc(seq_v_size + 1 * sizeof(char));
     seq_w = (char *) malloc(seq_w_size + 1 * sizeof(char));
 
+    if(seq_v == NULL || seq_w == NULL){
+      printf("Could not alloc strings\n");
+      exit(-1);
+    }
+
     strcpy(seq_v, v_string) ;
     strcpy(seq_w, w_string);
 
     pthread_mutex_init(&mutexWait, NULL);
     pthread_mutex_init(&mutexStart, NULL);
     pthread_cond_init(&condWait, NULL);
+    return 1;
 }
 
 int initMatrix(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
