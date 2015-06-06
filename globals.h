@@ -39,6 +39,12 @@ enum GAP_TYPE {
     penalty_left_penalty_right,
 } gap_type;
 
+enum ALIGNMENT_MODE {
+    k_band,
+    gap_blocks,
+    none,
+} alignment_mode;
+
 struct thread_data_t {
     int thread_id, numThreads, imax, jmax;
 } typedef thread_data_t;

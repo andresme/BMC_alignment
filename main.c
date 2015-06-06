@@ -9,7 +9,7 @@ int main(int argc, const char* argv[]) {
     score_table.missmatch = -1;
 
 //    for(int i = 1; i <= 4; i++){
-        runNeedlemanWunsch(free_left_penalty_right, free_left_penalty_right, "GAGATTTATTAGGAGGACCGACCGTGCACTACCTACTCAGATGCCCGAAGGCCTGCGATACACTT", "ACTACCTAC", 0, 1);
+        runNeedlemanWunsch(free_left_penalty_right, free_left_penalty_right, "CGCCGAGCGCAGAACTTACGAGCCAGGGGAAACAGTAAGGCCTATTTAAGTAAAGGGAGTAAGTGATCGAACGCTTCAGATGTAACCATATACTTAGGCT", "CGCCGAGCGCAGAACTTACGAGCCAGGGGAAACAGTAAGGCCTATTTAAGTAAAGGGAGTAAGTGATCGAACGCTTCAGATGTAACCATATACTTAGGCT", 0, 2);
 //        runSmithWaterman("TCTAACGGTA", "CGCATCTCGA", 0, 4);
 //    }
 

@@ -85,7 +85,7 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     }
     string_alignment.v_string[count] = '\0';
     string_alignment.w_string[count] = '\0';
-    printf("%s\n%s\n", string_alignment.v_string, string_alignment.w_string);
+    // printf("%s\n%s\n", string_alignment.v_string, string_alignment.w_string);
 }
 
 
@@ -123,18 +123,18 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
 
     runThreads(__start_routine, threads);
 
-    printf("%d,%d = %d\n", seq_w_size - 1, seq_v_size - 1, H[seq_w_size - 1][seq_v_size - 1]);
+    // printf("%d,%d = %d\n", seq_w_size - 1, seq_v_size - 1, H[seq_w_size - 1][seq_v_size - 1]);
 
     pthread_mutex_destroy(&mutexWait);
     pthread_cond_destroy(&condWait);
 
 
-    for (int i = 0; i < seq_w_size; i++) {
-        for (int j = 0; j < seq_v_size; j++) {
-            printf("%d\t", H[i][j]);
-        }
-        printf("\n");
-    }
+    // for (int i = 0; i < seq_w_size; i++) {
+    //     for (int j = 0; j < seq_v_size; j++) {
+    //         printf("%d\t", H[i][j]);
+    //     }
+    //     printf("\n");
+    // }
     getAlignment(v_type, w_type);
 }
 
