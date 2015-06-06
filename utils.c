@@ -150,6 +150,80 @@ int initMatrix(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
     return initDirectionsMatrix();
 }
 
+int initMatricesForBlocks(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
+    int size_w = seq_w_size + 1;
+    int size_v = seq_v_size + 1;
+
+    H = (int **) malloc(size_w * sizeof(int *));
+    if(H == NULL){
+        printf("could not allocate memory\n");
+        return -1;
+    }
+    for(int i = 0; i < size_w; i++){
+        H[i] = (int *) malloc(size_v * sizeof(int));
+        if(H[i] == NULL){
+            printf("could not allocate memory\n");
+            return -1;
+        }
+    }
+
+    B = (int **) malloc(size_w * sizeof(int *));
+    if(B == NULL){
+        printf("could not allocate memory\n");
+        return -1;
+    }
+    for(int i = 0; i < size_w; i++){
+        B[i] = (int *) malloc(size_v * sizeof(int));
+        if(B[i] == NULL){
+            printf("could not allocate memory\n");
+            return -1;
+        }
+    }
+
+    C = (int **) malloc(size_w * sizeof(int *));
+    if(C == NULL){
+        printf("could not allocate memory\n");
+        return -1;
+    }
+    for(int i = 0; i < size_w; i++){
+        C[i] = (int *) malloc(size_v * sizeof(int));
+        if(C[i] == NULL){
+            printf("could not allocate memory\n");
+            return -1;
+        }
+    }
+
+    for(int i = 0; i < size_w; i++){
+        for(int j = 0; j < size_v; j++){
+            H[i][j] = 0;
+            if(i == 0){
+                switch(w_type){
+                       case free_left_free_right:
+                       case free_left_penalty_right:
+                           H[i][j] = 0;
+                        break;
+                       default:
+                           H[i][j] = j * score_table.gap;
+                        break;
+                }
+            }
+            if(j == 0){
+                switch(v_type){
+                    case penalty_left_free_right:
+                    case penalty_left_penalty_right:
+                        H[i][j] = i * score_table.gap;
+                        break;
+                    default:
+                        H[i][j] = 0;
+                        break;
+                }
+            }
+
+        }
+    }
+    return 1;
+}
+
 bool shouldFill(int i, int j){
   int center = i - j;
   int temp;
