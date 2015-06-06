@@ -138,3 +138,16 @@ int initMatrix(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
     }
     return 1;
 }
+
+bool shouldFill(int i, int j, int k){
+  int left_side, center, right_side;
+  if(seq_w_size > seq_v_size){
+    left_side = seq_v_size - seq_w_size - k;
+    center = j - i;
+    return left_side <= center && center <= k;
+  } else {
+    left_side = seq_v_size - seq_w_size - k;
+    center = i - j;
+    return left_side <= center && center <= k;
+  }
+}

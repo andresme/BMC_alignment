@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
+#include <stdbool.h>
 
 /*
  * type:

@@ -1,5 +1,5 @@
 #include "alignments.h"
-#include <stdbool.h>
+
 
 void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     int max_i = seq_w_size - 1;
@@ -114,13 +114,13 @@ void runThreads(void *(*__start_routine)(void *), int threads) {
     printf("it took: %f ms for %d threads\n", diff, threads);
 }
 
-void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_string, char *w_string,
-                        int gap_blocks_enabled, int threads) {
+void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_string, char *w_string, enum ALIGNMENT_MODE mode, int threads, int initial_k, int adjust_k) {
     initStart(threads, v_string, w_string);
     initMatrix(v_type, w_type);
 
     void *(*__start_routine)(void *) = p_NeedlemanWunsch;
 
+    //int best_k_1 =
     runThreads(__start_routine, threads);
 
     // printf("%d,%d = %d\n", seq_w_size - 1, seq_v_size - 1, H[seq_w_size - 1][seq_v_size - 1]);
@@ -138,7 +138,7 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
     getAlignment(v_type, w_type);
 }
 
-void runSmithWaterman(char *v_string, char *w_string, int gap_blocks_enabled, int threads) {
+void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, int threads) {
     initStart(threads, v_string, w_string);
     initMatrix(free_left_free_right, free_left_free_right);
 
@@ -212,7 +212,7 @@ void *p_SmithWaterman(void *ptr_to_tdata) {
 
 void *p_NeedlemanWunsch(void *ptr_to_tdata) {
     thread_data_t *td = (thread_data_t *) ptr_to_tdata;
-    int temp[4];
+    int temp[3];
     int i, j, wave, tStart, tEnd;
     array_max_t arraymax;
 
