@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include <string.h>
 #include <stdbool.h>
+#include <limits.h>
 
 /*
  * type:
@@ -73,5 +74,7 @@ char *seq_w;
 
 table_score score_table;
 ALIGNMENT string_alignment;
+
+int current_k;
 
 #endif //ALIGNMENT_STRUCTS_H

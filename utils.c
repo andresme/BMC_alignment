@@ -150,15 +150,60 @@ int initMatrix(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
     return initDirectionsMatrix();
 }
 
-bool shouldFill(int i, int j, int k){
-  int left_side, center, right_side;
+bool shouldFill(int i, int j){
+  int center = i - j;
+  int temp;
   if(seq_w_size > seq_v_size){
-    left_side = seq_v_size - seq_w_size - k;
-    center = j - i;
-    return left_side <= center && center <= k;
+    temp = seq_w_size - seq_v_size + current_k;
+    return current_k <= center && center <= temp;
   } else {
-    left_side = seq_v_size - seq_w_size - k;
-    center = i - j;
-    return left_side <= center && center <= k;
+    temp = seq_w_size - seq_v_size - current_k;
+    return temp <= center && center <= current_k;
+  }
+}
+
+void clear(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
+  int size_w = seq_w_size + 1;
+  int size_v = seq_v_size + 1;
+
+  for(int i = 0; i < size_w; i++){
+      for(int j = 0; j < size_v; j++){
+          if(j == 0){
+              I_direction[i][j] = TOP;
+          } else if(i == 0){
+              I_direction[i][j] = LEFT;
+          } else {
+              I_direction[i][j] = NONE;
+          }
+
+      }
+  }
+  for(int i = 0; i < size_w; i++){
+      for(int j = 0; j < size_v; j++){
+          H[i][j] = 0;
+          if(i == 0){
+              switch(w_type){
+                     case free_left_free_right:
+                     case free_left_penalty_right:
+                         H[i][j] = 0;
+                      break;
+                     default:
+                         H[i][j] = j * score_table.gap;
+                      break;
+              }
+          }
+          if(j == 0){
+              switch(v_type){
+                  case penalty_left_free_right:
+                  case penalty_left_penalty_right:
+                      H[i][j] = i * score_table.gap;
+                      break;
+                  default:
+                      H[i][j] = 0;
+                      break;
+              }
+          }
+
+      }
   }
 }
