@@ -9,5 +9,6 @@ void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, 
 
 void *p_SmithWaterman(void *ptr_to_tdata);
 void *p_NeedlemanWunsch(void *ptr_to_tdata);
+void *p_NeedlemanWunschBlock(void *ptr_to_tdata);
 
 #endif //ALIGNMENT_ALIGNMENTS_H

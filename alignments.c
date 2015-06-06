@@ -122,7 +122,7 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
         initMatrix(v_type, w_type);
     }
 
-    void *(*__start_routine)(void *) = p_NeedlemanWunsch;
+    void *(*__start_routine)(void *) = mode == gap_blocks ? p_NeedlemanWunschBlock : p_NeedlemanWunsch;
 
     if(mode == k_band){
       int best_k_1 = INT_MAX;
@@ -153,8 +153,12 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
 
 void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, int threads) {
     initStart(threads, v_string, w_string);
-    initMatrix(free_left_free_right, free_left_free_right);
-
+    if (mode == gap_blocks){
+        initMatricesForBlocks(free_left_free_right, free_left_free_right);
+    } else {
+        initMatrix(free_left_free_right, free_left_free_right);
+    }
+    
     void *(*__start_routine)(void *) = p_SmithWaterman;
 
     runThreads(__start_routine, threads, mode);
@@ -304,7 +308,44 @@ void *p_NeedlemanWunschBlock(void *ptr_to_tdata) {
                         I_direction[i][j] = TOP_LEFT_C;
                         break;
                 }
+
+                tempB[0] = H[i - 1][j] != INT_MIN ? H[i - 1][j] + score_table.continue_block_cost + score_table.new_block_cost : INT_MIN;
+                tempB[1] = B[i - 1][j] != INT_MIN ? B[i - 1][j] + score_table.continue_block_cost : INT_MIN;
+                tempB[2] = C[i - 1][j] != INT_MIN ? C[i - 1][j] + score_table.continue_block_cost + score_table.new_block_cost : INT_MIN;
+                arraymax = find_array_max(tempB, 3);
+                B[i][j] = arraymax.max;
+                
+                switch (arraymax.ind) {
+                    case 0:                                  // score in (i,j) stems from a match/mismatch
+                        I_direction[i][j] = LEFT_H;
+                        break;
+                    case 1:                                  // score in (i,j) stems from a deletion in sequence V
+                        I_direction[i][j] = LEFT_B;
+                        break;
+                    case 2:                                  // score in (i,j) stems from a deletion in sequence W
+                        I_direction[i][j] = LEFT_C;
+                        break;
+                }
+
+                tempC[0] = H[i][j - 1] != INT_MIN ? H[i][j - 1] + score_table.continue_block_cost + score_table.new_block_cost : INT_MIN;
+                tempC[1] = B[i][j - 1] != INT_MIN ? H[i][j - 1] + score_table.continue_block_cost + score_table.new_block_cost : INT_MIN;
+                tempC[2] = C[i][j - 1] != INT_MIN ? H[i][j - 1] + score_table.continue_block_cost : INT_MIN;
+                arraymax = find_array_max(tempC, 3);
+                H[i][j] = arraymax.max;
+
+                switch (arraymax.ind) {
+                    case 0:                                  // score in (i,j) stems from a match/mismatch
+                        I_direction[i][j] = TOP_H;
+                        break;
+                    case 1:                                  // score in (i,j) stems from a deletion in sequence V
+                        I_direction[i][j] = TOP_B;
+                        break;
+                    case 2:                                  // score in (i,j) stems from a deletion in sequence W
+                        I_direction[i][j] = TOP_C;
+                        break;
+                }
             }
+
             pthread_mutex_lock(&mutexWait);
             waitingThreads--;
             if (waitingThreads > 0) {
