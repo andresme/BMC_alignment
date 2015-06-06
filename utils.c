@@ -1,6 +1,6 @@
 #include "utils.h"
 
-thread_data_t *setup_thread_data(int num_threads, int imax, int jmax) {
+thread_data_t *setup_thread_data(int num_threads, int imax, int jmax, enum ALIGNMENT_MODE mode) {
 
     thread_data_t *tdata;
     tdata = (thread_data_t *) malloc(num_threads * sizeof(thread_data_t));
@@ -10,6 +10,7 @@ thread_data_t *setup_thread_data(int num_threads, int imax, int jmax) {
         tdata[i].numThreads = num_threads;
         tdata[i].imax = imax;
         tdata[i].jmax = jmax;
+        tdata[i].mode = mode;
     }
 
     return tdata;

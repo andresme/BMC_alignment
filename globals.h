@@ -49,6 +49,7 @@ enum ALIGNMENT_MODE {
 
 struct thread_data_t {
     int thread_id, numThreads, imax, jmax;
+    enum ALIGNMENT_MODE mode;
 } typedef thread_data_t;
 
 struct array_max_t {

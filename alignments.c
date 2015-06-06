@@ -43,6 +43,7 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     int j = max_j;
     int count = 0;
     while(i > 0 || j > 0){
+      printf("here\n");
         if(I_direction[i][j] == TOP_LEFT){
             i = i-1;
             j = j-1;
@@ -62,6 +63,7 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     j = max_j;
     int v_index = count-1;
     int w_index = count-1;
+    printf("count %d", count);
     while(i > 0 || j > 0){
         if(I_direction[i][j] == TOP_LEFT){
             string_alignment.v_string[v_index] = seq_v[j];
@@ -84,16 +86,16 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     }
     string_alignment.v_string[count] = '\0';
     string_alignment.w_string[count] = '\0';
-    // printf("%s\n%s\n", string_alignment.v_string, string_alignment.w_string);
+    printf("%s\n%s\n", string_alignment.v_string, string_alignment.w_string);
 }
 
 
-void runThreads(void *(*__start_routine)(void *), int threads) {
+void runThreads(void *(*__start_routine)(void *), int threads, enum ALIGNMENT_MODE mode) {
     clock_t t1, t2;
 
     void *status;
     pthread_t callThd[threads];
-    thread_data_t *data = setup_thread_data(threads, seq_w_size, seq_v_size);
+    thread_data_t *data = setup_thread_data(threads, seq_w_size, seq_v_size, mode);
 
     waitingThreads = threads;
     pthread_mutex_lock(&mutexStart);
@@ -122,17 +124,17 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
     int best_k_1 = INT_MAX;
     current_k = initial_k;
     while(best_k_1 > H[seq_w_size - 1][seq_v_size - 1]){
-      runThreads(__start_routine, threads);
+      runThreads(__start_routine, threads, mode);
       current_k += adjust_k;
 
       best_k_1 = (2*current_k + seq_w_size - seq_v_size) * score_table.gap +
         (seq_v_size - current_k) * score_table.match;
 
-      if(best_k_1 > H[seq_w_size - 1][seq_v_size - 1]){
-        clear(v_type, w_type);
-      } else {
-        break;
-      }
+      // if(best_k_1 > H[seq_w_size - 1][seq_v_size - 1]){
+      //   clear(v_type, w_type);
+      // } else {
+      //   break;
+      // }
     }
 
     // printf("%d,%d = %d\n", seq_w_size - 1, seq_v_size - 1, H[seq_w_size - 1][seq_v_size - 1]);
@@ -140,12 +142,12 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
     pthread_mutex_destroy(&mutexWait);
     pthread_cond_destroy(&condWait);
 
-    // for (int i = 0; i < seq_w_size; i++) {
-    //     for (int j = 0; j < seq_v_size; j++) {
-    //         printf("%d\t", H[i][j]);
-    //     }
-    //     printf("\n");
-    // }
+    for (int i = 0; i < seq_w_size; i++) {
+        for (int j = 0; j < seq_v_size; j++) {
+            printf("%d\t", H[i][j]);
+        }
+        printf("\n");
+    }
     getAlignment(v_type, w_type);
 }
 
@@ -155,7 +157,7 @@ void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, 
 
     void *(*__start_routine)(void *) = p_SmithWaterman;
 
-    runThreads(__start_routine, threads);
+    runThreads(__start_routine, threads, mode);
 
     printf("%d\n", H[seq_w_size][seq_v_size]);
 
