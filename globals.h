@@ -65,6 +65,8 @@ int startedThreads;
 
 int **I_direction;
 int **H;
+int **B;
+int **C;
 
 int threads;
 int seq_v_size;
