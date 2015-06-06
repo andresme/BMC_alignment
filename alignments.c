@@ -1,6 +1,5 @@
 #include "alignments.h"
 
-
 void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     int max_i = seq_w_size - 1;
     int max_j = seq_v_size - 1;
@@ -63,6 +62,7 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     j = max_j;
     int v_index = count-1;
     int w_index = count-1;
+
     while(i > 0 || j > 0){
         if(I_direction[i][j] == TOP_LEFT){
             string_alignment.v_string[v_index] = seq_v[j];
@@ -85,16 +85,16 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     }
     string_alignment.v_string[count] = '\0';
     string_alignment.w_string[count] = '\0';
-    // printf("%s\n%s\n", string_alignment.v_string, string_alignment.w_string);
+    printf("%s\n%s\n", string_alignment.v_string, string_alignment.w_string);
 }
 
 
-void runThreads(void *(*__start_routine)(void *), int threads) {
+void runThreads(void *(*__start_routine)(void *), int threads, enum ALIGNMENT_MODE mode) {
     clock_t t1, t2;
 
     void *status;
     pthread_t callThd[threads];
-    thread_data_t *data = setup_thread_data(threads, seq_w_size, seq_v_size);
+    thread_data_t *data = setup_thread_data(threads, seq_w_size, seq_v_size, mode);
 
     waitingThreads = threads;
     pthread_mutex_lock(&mutexStart);
@@ -120,21 +120,30 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
 
     void *(*__start_routine)(void *) = p_NeedlemanWunsch;
 
-    //int best_k_1 =
-    runThreads(__start_routine, threads);
+    if(mode == k_band){
+      int best_k_1 = INT_MAX;
+      current_k = initial_k;
+      while(best_k_1 > H[seq_w_size - 1][seq_v_size - 1]){
+        init_k_band(v_type, w_type);
+        runThreads(__start_routine, threads, mode);
+
+        current_k += adjust_k;
+
+        best_k_1 = (2*current_k + seq_w_size - seq_v_size) * score_table.gap +
+          (seq_v_size - current_k) * score_table.match;
+
+      }
+    } else {
+      runThreads(__start_routine, threads, mode);
+    }
 
     // printf("%d,%d = %d\n", seq_w_size - 1, seq_v_size - 1, H[seq_w_size - 1][seq_v_size - 1]);
 
     pthread_mutex_destroy(&mutexWait);
     pthread_cond_destroy(&condWait);
 
+    printMatrix(H);
 
-    // for (int i = 0; i < seq_w_size; i++) {
-    //     for (int j = 0; j < seq_v_size; j++) {
-    //         printf("%d\t", H[i][j]);
-    //     }
-    //     printf("\n");
-    // }
     getAlignment(v_type, w_type);
 }
 
@@ -144,7 +153,7 @@ void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, 
 
     void *(*__start_routine)(void *) = p_SmithWaterman;
 
-    runThreads(__start_routine, threads);
+    runThreads(__start_routine, threads, mode);
 
     printf("%d\n", H[seq_w_size][seq_v_size]);
 
@@ -174,7 +183,7 @@ void *p_SmithWaterman(void *ptr_to_tdata) {
     for (wave = 1; wave <= td->imax + td->numThreads - 1; wave++) {
         i = wave - td->thread_id;
         if (i >= 1 && i <= td->imax) {
-            for (j = tStart; j <= tEnd; j++) {
+            for (j = tStart; j < tEnd; j++) {
                 temp[0] = H[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]);
                 temp[1] = H[i - 1][j] - 2;
                 temp[2] = H[i][j - 1] - 2;
@@ -210,6 +219,8 @@ void *p_SmithWaterman(void *ptr_to_tdata) {
     return ((void *) 0);
 }
 
+
+
 void *p_NeedlemanWunsch(void *ptr_to_tdata) {
     thread_data_t *td = (thread_data_t *) ptr_to_tdata;
     int temp[3];
@@ -221,10 +232,13 @@ void *p_NeedlemanWunsch(void *ptr_to_tdata) {
     for (wave = 1; wave <= td->imax + td->numThreads - 1; wave++) {
         i = wave - td->thread_id;
         if (i >= 1 && i <= td->imax) {
-            for (j = tStart; j <= tEnd; j++) {
-                temp[0] = H[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]);
-                temp[1] = H[i - 1][j] - 2;
-                temp[2] = H[i][j - 1] - 2;
+            for (j = tStart; j < tEnd; j++) {
+                if(!shouldFill(i, j) && td->mode == k_band){
+                  continue;
+                }
+                temp[0] = H[i - 1][j - 1] != INT_MIN ? H[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]) : INT_MIN;
+                temp[1] = H[i - 1][j] != INT_MIN ? H[i - 1][j] - 2 : INT_MIN;
+                temp[2] = H[i][j - 1] != INT_MIN ? H[i][j - 1] - 2 : INT_MIN;
                 arraymax = find_array_max(temp, 3);
                 H[i][j] = arraymax.max;
                 switch (arraymax.ind) {

@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include <string.h>
 #include <stdbool.h>
+#include <limits.h>
 
 /*
  * type:
@@ -48,6 +49,7 @@ enum ALIGNMENT_MODE {
 
 struct thread_data_t {
     int thread_id, numThreads, imax, jmax;
+    enum ALIGNMENT_MODE mode;
 } typedef thread_data_t;
 
 struct array_max_t {
@@ -63,6 +65,8 @@ int startedThreads;
 
 int **I_direction;
 int **H;
+int **B;
+int **C;
 
 int threads;
 int seq_v_size;
@@ -73,5 +77,7 @@ char *seq_w;
 
 table_score score_table;
 ALIGNMENT string_alignment;
+
+int current_k;
 
 #endif //ALIGNMENT_STRUCTS_H

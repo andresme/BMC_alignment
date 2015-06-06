@@ -10,7 +10,7 @@ int main(int argc, const char* argv[]) {
 
 //    for(int i = 1; i <= 4; i++){
 
-    runNeedlemanWunsch(free_left_penalty_right, free_left_penalty_right, "CGCCGAGCGCAGAACTTACGAGCCAGGGGAAACAGTAAGGCCTATTTAAGTAAAGGGAGTAAGTGATCGAACGCTTCAGATGTAACCATATACTTAGGCT", "CGCCGAGCGCAGAACTTACGAGCCAGGGGAAACAGTAAGGCCTATTTAAGTAAAGGGAGTAAGTGATCGAACGCTTCAGATGTAACCATATACTTAGGCT", none, 1, 0, 0);
+    runNeedlemanWunsch(penalty_left_penalty_right, penalty_left_penalty_right, "TTGCATCGGC", "ATTGTGATCC", k_band, 1, 0, 1);
 //        runSmithWaterman("TCTAACGGTA", "CGCATCTCGA", 0, 4);
 //    }
 
