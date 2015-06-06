@@ -142,7 +142,7 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
     pthread_mutex_destroy(&mutexWait);
     pthread_cond_destroy(&condWait);
 
-    //printMatrix();
+    printMatrix(H);
 
     getAlignment(v_type, w_type);
 }

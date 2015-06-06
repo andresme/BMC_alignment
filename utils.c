@@ -52,9 +52,6 @@ int initStart(int numThreads, char *v_string, char *w_string){
     strcpy(seq_v, v_string);
     strcpy(seq_w, w_string);
 
-    printf("%s\n%s\n", v_string, w_string);
-    printf("%s\n%s\n", seq_v, seq_w);
-
     pthread_mutex_init(&mutexWait, NULL);
     pthread_mutex_init(&mutexStart, NULL);
     pthread_cond_init(&condWait, NULL);
@@ -93,13 +90,13 @@ int initDirectionsMatrix() {
     return 1;
 }
 
-void printMatrix(){
+void printMatrix(int **matrix){
     int size_w = seq_w_size + 1;
     int size_v = seq_v_size + 1;
 
     for(int i = 0; i < size_w; i++){
         for(int j = 0; j < size_v; j++){
-           printf("%d\t", H[i][j]);
+           printf("%d\t", matrix[i][j]);
        }
        printf("\n");
    }
@@ -204,7 +201,7 @@ int initMatricesForBlocks(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
         for(int j = 0; j < size_v; j++){
             H[i][j] = INT_MIN;
             if (i==0 && j == 0) {
-                H[i][j] = 0; 
+                H[i][j] = 0;
             }
         }
     }
