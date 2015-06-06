@@ -18,6 +18,8 @@ struct table_score {
     int match;
     int missmatch;
     int gap;
+    int new_block_cost;
+    int continue_block_cost;
     int **table;
 } typedef table_score;
 
@@ -32,6 +34,15 @@ enum DIRECTION {
     LEFT,
     TOP_LEFT,
     NONE,
+    TOP_H,
+    TOP_B,
+    TOP_C,
+    LEFT_H,
+    LEFT_B,
+    LEFT_C,
+    TOP_LEFT_H,
+    TOP_LEFT_B,
+    TOP_LEFT_C
 } direction;
 
 enum GAP_TYPE {

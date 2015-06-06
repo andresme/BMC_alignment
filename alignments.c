@@ -116,7 +116,11 @@ void runThreads(void *(*__start_routine)(void *), int threads, enum ALIGNMENT_MO
 
 void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_string, char *w_string, enum ALIGNMENT_MODE mode, int threads, int initial_k, int adjust_k) {
     initStart(threads, v_string, w_string);
-    initMatrix(v_type, w_type);
+    if (mode == gap_blocks){
+        initMatricesForBlocks(v_type, w_type);
+    } else {
+        initMatrix(v_type, w_type);
+    }
 
     void *(*__start_routine)(void *) = p_NeedlemanWunsch;
 
@@ -219,8 +223,6 @@ void *p_SmithWaterman(void *ptr_to_tdata) {
     return ((void *) 0);
 }
 
-
-
 void *p_NeedlemanWunsch(void *ptr_to_tdata) {
     thread_data_t *td = (thread_data_t *) ptr_to_tdata;
     int temp[3];
@@ -237,10 +239,11 @@ void *p_NeedlemanWunsch(void *ptr_to_tdata) {
                   continue;
                 }
                 temp[0] = H[i - 1][j - 1] != INT_MIN ? H[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]) : INT_MIN;
-                temp[1] = H[i - 1][j] != INT_MIN ? H[i - 1][j] - 2 : INT_MIN;
-                temp[2] = H[i][j - 1] != INT_MIN ? H[i][j - 1] - 2 : INT_MIN;
+                temp[1] = H[i - 1][j] != INT_MIN ? H[i - 1][j] + score_table.gap : INT_MIN;
+                temp[2] = H[i][j - 1] != INT_MIN ? H[i][j - 1] + score_table.gap : INT_MIN;
                 arraymax = find_array_max(temp, 3);
                 H[i][j] = arraymax.max;
+
                 switch (arraymax.ind) {
                     case 0:                                  // score in (i,j) stems from a match/mismatch
                         I_direction[i][j] = TOP_LEFT;
@@ -250,6 +253,55 @@ void *p_NeedlemanWunsch(void *ptr_to_tdata) {
                         break;
                     case 2:                                  // score in (i,j) stems from a deletion in sequence W
                         I_direction[i][j] = LEFT;
+                        break;
+                }
+            }
+            pthread_mutex_lock(&mutexWait);
+            waitingThreads--;
+            if (waitingThreads > 0) {
+                pthread_cond_wait(&condWait, &mutexWait);
+            } else {
+                waitingThreads = td->numThreads;
+                pthread_cond_broadcast(&condWait);
+            }
+            pthread_mutex_unlock(&mutexWait);
+        }
+    }
+    return ((void *) 0);
+}
+
+void *p_NeedlemanWunschBlock(void *ptr_to_tdata) {
+    thread_data_t *td = (thread_data_t *) ptr_to_tdata;
+    int tempH[3];
+    int tempB[3];
+    int tempC[3];
+    int i, j, wave, tStart, tEnd;
+    array_max_t arraymax;
+
+    tStart = ((td->jmax / td->numThreads) * td->thread_id) + 1;
+    tEnd = tStart + (td->jmax / td->numThreads);
+    for (wave = 1; wave <= td->imax + td->numThreads - 1; wave++) {
+        i = wave - td->thread_id;
+        if (i >= 1 && i <= td->imax) {
+            for (j = tStart; j < tEnd; j++) {
+                if(!shouldFill(i, j) && td->mode == k_band){
+                  continue;
+                }
+                tempH[0] = H[i - 1][j - 1] != INT_MIN ? H[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]) : INT_MIN;
+                tempH[1] = B[i - 1][j - 1] != INT_MIN ? B[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]) : INT_MIN;
+                tempH[2] = C[i - 1][j - 1] != INT_MIN ? C[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]) : INT_MIN;
+                arraymax = find_array_max(tempH, 3);
+                H[i][j] = arraymax.max;
+                
+                switch (arraymax.ind) {
+                    case 0:                                  // score in (i,j) stems from a match/mismatch
+                        I_direction[i][j] = TOP_LEFT_H;
+                        break;
+                    case 1:                                  // score in (i,j) stems from a deletion in sequence V
+                        I_direction[i][j] = TOP_LEFT_B;
+                        break;
+                    case 2:                                  // score in (i,j) stems from a deletion in sequence W
+                        I_direction[i][j] = TOP_LEFT_C;
                         break;
                 }
             }
