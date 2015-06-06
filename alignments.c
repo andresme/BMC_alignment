@@ -223,6 +223,8 @@ void *p_SmithWaterman(void *ptr_to_tdata) {
     return ((void *) 0);
 }
 
+
+
 void *p_NeedlemanWunsch(void *ptr_to_tdata) {
     thread_data_t *td = (thread_data_t *) ptr_to_tdata;
     int temp[3];
@@ -238,9 +240,9 @@ void *p_NeedlemanWunsch(void *ptr_to_tdata) {
                 if(!shouldFill(i, j)){
                   continue;
                 }
-                temp[0] = H[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]);
-                temp[1] = H[i - 1][j] - 2;
-                temp[2] = H[i][j - 1] - 2;
+                temp[0] = H[i - 1][j - 1] != INT_MIN ? H[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]) : INT_MIN;
+                temp[1] = H[i - 1][j] != INT_MIN ? H[i - 1][j] - 2 : INT_MIN;
+                temp[2] = H[i][j - 1] != INT_MIN ? H[i][j - 1] - 2 : INT_MIN;
                 arraymax = find_array_max(temp, 3);
                 H[i][j] = arraymax.max;
                 switch (arraymax.ind) {
