@@ -58,9 +58,53 @@ int initStart(int numThreads, char *v_string, char *w_string){
     return 1;
 }
 
+int initDirectionsMatrix() {
+    int size_w = seq_w_size + 1;
+    int size_v = seq_v_size + 1;
+
+    I_direction = (int **) malloc(size_w * sizeof(int *));
+    if(I_direction == NULL){
+        printf("could not allocate memory\n");
+        return -1;
+    }
+    for(int i = 0; i < size_w; i++){
+        I_direction[i] = (int *) malloc(size_v * sizeof(int));
+        if(I_direction[i] == NULL){
+            printf("could not allocate memory\n");
+            return -1;
+        }
+    }
+
+    for(int i = 0; i < size_w; i++){
+        for(int j = 0; j < size_v; j++){
+            if(j == 0){
+                I_direction[i][j] = TOP;
+            } else if(i == 0){
+                I_direction[i][j] = LEFT;
+            } else {
+                I_direction[i][j] = NONE;
+            }
+
+        }
+    }
+    return 1;
+}
+
+void printMatrix(int** H){
+   for(int i = 0; i < seq_w_size; i++){
+       for(int j = 0; j < seq_v_size; j++){
+           printf("%d\t", H[i][j]);
+       }
+       printf("\n");
+   }
+
+   printf("----------------------\n");
+}
+
 int initMatrix(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
     int size_w = seq_w_size + 1;
     int size_v = seq_v_size + 1;
+    
     H = (int **) malloc(size_w * sizeof(int *));
     if(H == NULL){
         printf("could not allocate memory\n");
@@ -103,41 +147,8 @@ int initMatrix(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
         }
     }
 
-//    for(int i = 0; i < seq_w_size; i++){
-//        for(int j = 0; j < seq_v_size; j++){
-//            printf("%d\t", H[i][j]);
-//        }
-//        printf("\n");
-//    }
-//
-//    printf("----------------------\n");
-
-    I_direction = (int **) malloc(size_w * sizeof(int *));
-    if(I_direction == NULL){
-        printf("could not allocate memory\n");
-        return -1;
-    }
-    for(int i = 0; i < size_w; i++){
-        I_direction[i] = (int *) malloc(size_v * sizeof(int));
-        if(I_direction[i] == NULL){
-            printf("could not allocate memory\n");
-            return -1;
-        }
-    }
-
-    for(int i = 0; i < size_w; i++){
-        for(int j = 0; j < size_v; j++){
-            if(j == 0){
-                I_direction[i][j] = TOP;
-            } else if(i == 0){
-                I_direction[i][j] = LEFT;
-            } else {
-                I_direction[i][j] = NONE;
-            }
-
-        }
-    }
-    return 1;
+    //printMatrix(H);
+    return initDirectionsMatrix();
 }
 
 bool shouldFill(int i, int j){
