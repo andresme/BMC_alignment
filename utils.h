@@ -9,5 +9,8 @@ array_max_t find_array_max(int temp[], int size);
 int similarity_score(char a, char b);
 int initStart(int numThreads, char *v_string, char *w_string);
 int initMatrix(enum GAP_TYPE v_type, enum GAP_TYPE w_type);
+bool shouldFill(int i, int j);
+void clear(enum GAP_TYPE v_type, enum GAP_TYPE w_type);
+
 
 #endif //ALIGNMENT_UTILS_H

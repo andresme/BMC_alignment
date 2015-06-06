@@ -1,6 +1,5 @@
 #include "alignments.h"
 
-
 void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     int max_i = seq_w_size - 1;
     int max_j = seq_v_size - 1;
@@ -120,14 +119,26 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
 
     void *(*__start_routine)(void *) = p_NeedlemanWunsch;
 
-    //int best_k_1 =
-    runThreads(__start_routine, threads);
+    int best_k_1 = INT_MAX;
+    current_k = initial_k;
+    while(best_k_1 > H[seq_w_size - 1][seq_v_size - 1]){
+      runThreads(__start_routine, threads);
+      current_k += adjust_k;
+
+      best_k_1 = (2*current_k + seq_w_size - seq_v_size) * score_table.gap +
+        (seq_v_size - current_k) * score_table.match;
+
+      if(best_k_1 > H[seq_w_size - 1][seq_v_size - 1]){
+        clear(v_type, w_type);
+      } else {
+        break;
+      }
+    }
 
     // printf("%d,%d = %d\n", seq_w_size - 1, seq_v_size - 1, H[seq_w_size - 1][seq_v_size - 1]);
 
     pthread_mutex_destroy(&mutexWait);
     pthread_cond_destroy(&condWait);
-
 
     // for (int i = 0; i < seq_w_size; i++) {
     //     for (int j = 0; j < seq_v_size; j++) {
@@ -222,6 +233,9 @@ void *p_NeedlemanWunsch(void *ptr_to_tdata) {
         i = wave - td->thread_id;
         if (i >= 1 && i <= td->imax) {
             for (j = tStart; j <= tEnd; j++) {
+                if(!shouldFill(i, j)){
+                  continue;
+                }
                 temp[0] = H[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]);
                 temp[1] = H[i - 1][j] - 2;
                 temp[2] = H[i][j - 1] - 2;
