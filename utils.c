@@ -1,6 +1,6 @@
 #include "utils.h"
 
-thread_data_t *setup_thread_data(int num_threads, int imax, int jmax) {
+thread_data_t *setup_thread_data(int num_threads, int imax, int jmax, enum ALIGNMENT_MODE mode) {
 
     thread_data_t *tdata;
     tdata = (thread_data_t *) malloc(num_threads * sizeof(thread_data_t));
@@ -10,6 +10,7 @@ thread_data_t *setup_thread_data(int num_threads, int imax, int jmax) {
         tdata[i].numThreads = num_threads;
         tdata[i].imax = imax;
         tdata[i].jmax = jmax;
+        tdata[i].mode = mode;
     }
 
     return tdata;
@@ -103,7 +104,7 @@ void printMatrix(int** H){
 int initMatrix(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
     int size_w = seq_w_size + 1;
     int size_v = seq_v_size + 1;
-    
+
     H = (int **) malloc(size_w * sizeof(int *));
     if(H == NULL){
         printf("could not allocate memory\n");
@@ -119,7 +120,7 @@ int initMatrix(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
 
     for(int i = 0; i < size_w; i++){
         for(int j = 0; j < size_v; j++){
-            H[i][j] = 0;
+            H[i][j] = INT_MIN;
             if(i == 0){
                 switch(w_type){
                        case free_left_free_right:
