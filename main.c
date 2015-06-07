@@ -12,7 +12,7 @@ int main(int argc, const char* argv[]) {
 
 
 //    for(int i = 1; i <= 4; i++){
-    runNeedlemanWunsch(penalty_left_penalty_right, penalty_left_penalty_right, "ATGCGCGATCGATCAGCTAGCTACGATTATATATGCAGCGCGCGCAGCACAGCTAGCTA", "ACTTCTCATCATCTATCTTTCATCTACTAAACT", none, 1, 0, 1);
+    runNeedlemanWunsch(penalty_left_free_right, penalty_left_penalty_right, "habia una vez", "una vez habia", none, 1, 0, 1);
 //        runSmithWaterman("TCTAACGGTA", "CGCATCTCGA", 0, 4);
 //    }
 
