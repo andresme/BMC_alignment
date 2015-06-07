@@ -57,10 +57,10 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     }
 
     if(count < seq_w_size){
-      count += seq_w_size-count;
+      count += seq_w_size-count+1;
     }
     if(count < seq_v_size){
-      count += seq_v_size-count;
+      count += seq_v_size-count+1;
     }
     printf("count: %d\n", count);
     string_alignment.v_string = (char *) malloc(count * sizeof(char));
@@ -190,7 +190,7 @@ void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, 
     } else {
         initMatrix(free_left_free_right, free_left_free_right);
     }
-    
+
     void *(*__start_routine)(void *) = p_SmithWaterman;
 
     runThreads(__start_routine, threads, mode);
@@ -328,7 +328,7 @@ void *p_NeedlemanWunschBlock(void *ptr_to_tdata) {
                 tempH[2] = C[i - 1][j - 1] != INT_MIN ? C[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]) : INT_MIN;
                 arraymax = find_array_max(tempH, 3);
                 H[i][j] = arraymax.max;
-                
+
                 switch (arraymax.ind) {
                     case 0:                                  // score in (i,j) stems from a match/mismatch
                         I_direction[i][j] = TOP_LEFT_H;
@@ -346,7 +346,7 @@ void *p_NeedlemanWunschBlock(void *ptr_to_tdata) {
                 tempB[2] = C[i - 1][j] != INT_MIN ? C[i - 1][j] + score_table.continue_block_cost + score_table.new_block_cost : INT_MIN;
                 arraymax = find_array_max(tempB, 3);
                 B[i][j] = arraymax.max;
-                
+
                 switch (arraymax.ind) {
                     case 0:                                  // score in (i,j) stems from a match/mismatch
                         I_direction[i][j] = LEFT_H;
