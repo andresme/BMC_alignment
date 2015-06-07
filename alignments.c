@@ -1,18 +1,20 @@
 #include "alignments.h"
 
 void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
-    int max_i = seq_w_size - 1;
-    int max_j = seq_v_size - 1;
+    int max_i = seq_w_size;
+    int max_j = seq_v_size;
+
+    //printMatrix(I_direction);
 
     bool v_type_value = v_type == free_left_free_right || v_type == penalty_left_free_right;
     bool w_type_value = w_type == free_left_free_right || w_type == penalty_left_free_right;
     int temp = H[seq_w_size][seq_v_size];
     if (v_type_value && w_type_value) {
-        for (int i = seq_w_size - 1; i > 0; i--) {
-            for (int j = seq_v_size - 1; j > 0; j--) {
+        for (int i = seq_w_size; i > 0; i--) {
+            for (int j = seq_v_size; j > 0; j--) {
                 if (H[seq_w_size][j] > temp) {
-                    temp = H[seq_w_size - 1][j];
-                    max_i = seq_w_size - 1;
+                    temp = H[seq_w_size][j];
+                    max_i = seq_w_size;
                     max_j = j;
                 }
             }
@@ -23,14 +25,14 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
             }
         }
     } else if (v_type_value) {
-        for (int j = seq_v_size - 1; j > 0; j--) {
+        for (int j = seq_v_size; j > 0; j--) {
             if (H[seq_w_size][j] > temp) {
                 temp = H[seq_w_size][j];
                 max_j = j;
             }
         }
     } else if (w_type_value) {
-        for (int i = seq_w_size - 1; i > 0; i--) {
+        for (int i = seq_w_size; i > 0; i--) {
             if (H[i][seq_v_size] > temp) {
                 temp = H[i][seq_v_size];
                 max_i = i;
@@ -41,22 +43,25 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
 
     int i = max_i;
     int j = max_j;
-    int count = 1;
+    int count = 0;
     while(i >= 0 && j >= 0){
         if(I_direction[i][j] == TOP_LEFT){
+          //printf("Top left\n");
             i = i-1;
             j = j-1;
         } else if(I_direction[i][j] == TOP){
+        //  printf("Top\n");
             i = i-1;
         } else if(I_direction[i][j] == LEFT){
+        //  printf("Left\n");
             j = j-1;
         } else {
             break;
         }
         count++;
     }
+    //printf("count: %d\n", count);
 
-//TODO: ERROR ESTA AQUI
     if(count < seq_w_size){
       count += seq_w_size - count;
     }
@@ -64,7 +69,7 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
       count += seq_v_size - count;
     }
 
-    printf("count: %d\n", count);
+    //printf("count: %d\n", count);
     string_alignment.v_string = (char *) malloc(count * sizeof(char));
     string_alignment.w_string = (char *) malloc(count * sizeof(char));
 
@@ -76,7 +81,7 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     while(seq_w_size - temp >= i+1){
       string_alignment.v_string[str_index] = '-';
       string_alignment.w_string[str_index] = seq_w[seq_w_size - temp - 1];
-      printf("%c , %c : %d\n", '-', seq_w[seq_w_size-temp-1], str_index);
+      //printf("%c , %c : %d\n", '-', seq_w[seq_w_size-temp-1], str_index);
       temp++;
       str_index--;
     }
@@ -85,29 +90,29 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     while(seq_v_size - temp >= j+1){
       string_alignment.v_string[str_index] = seq_v[seq_v_size - temp - 1];
       string_alignment.w_string[str_index] = '-';
-      printf("%c , %c : %d\n", seq_v[seq_v_size-temp-1], '-', str_index);
+      //printf("%c , %c : %d\n", seq_v[seq_v_size-temp-1], '-', str_index);
       temp++;
       str_index--;
     }
 
 
     while(i >= 0 && j >= 0){
-      printf("%d, %d\n", i, j);
+      //printf("%d, %d\n", i, j);
         if(I_direction[i][j] == TOP_LEFT){
             string_alignment.v_string[str_index] = seq_v[j-1];
             string_alignment.w_string[str_index] = seq_w[i-1];
-            printf("%c , %c : %d\n", seq_v[j-1], seq_w[i-1], str_index);
+            //printf("%c , %c : %d\n", seq_v[j-1], seq_w[i-1], str_index);
             i = i-1;
             j = j-1;
         } else if(I_direction[i][j] == TOP){
             string_alignment.v_string[str_index] = '-';
             string_alignment.w_string[str_index] = seq_w[i-1];
-            printf("%c , %c : %d\n", '-', seq_w[i-1], str_index);
+            //printf("%c , %c : %d\n", '-', seq_w[i-1], str_index);
             i = i-1;
         } else if(I_direction[i][j] == LEFT){
             string_alignment.v_string[str_index] = seq_v[j-1];
             string_alignment.w_string[str_index] = '-';
-            printf("%c , %c : %d\n", seq_v[j-1], '-', str_index);
+            //printf("%c , %c : %d\n", seq_v[j-1], '-', str_index);
             j = j-1;
         } else {
             break;
@@ -117,7 +122,6 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     string_alignment.v_string[count] = '\0';
     string_alignment.w_string[count] = '\0';
 
-    printf("%s\n%s\n", seq_v, seq_w);
 
     printf("%s\n%s\n", string_alignment.v_string, string_alignment.w_string);
 }
