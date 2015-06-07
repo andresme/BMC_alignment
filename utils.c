@@ -84,9 +84,9 @@ int initDirectionsMatrix() {
             } else {
                 I_direction[i][j] = NONE;
             }
-
         }
     }
+    I_direction[0][0] = NONE;
     return 1;
 }
 
