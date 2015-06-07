@@ -41,8 +41,8 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
 
     int i = max_i;
     int j = max_j;
-    int count = 0;
-    while(i > 0 || j > 0){
+    int count = 1;
+    while(i >= 0 && j >= 0){
         if(I_direction[i][j] == TOP_LEFT){
             i = i-1;
             j = j-1;
@@ -56,12 +56,14 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
         count++;
     }
 
+//TODO: ERROR ESTA AQUI
     if(count < seq_w_size){
-      count += seq_w_size-count+1;
+      count += seq_w_size - count;
     }
     if(count < seq_v_size){
-      count += seq_v_size-count+1;
+      count += seq_v_size - count;
     }
+
     printf("count: %d\n", count);
     string_alignment.v_string = (char *) malloc(count * sizeof(char));
     string_alignment.w_string = (char *) malloc(count * sizeof(char));
