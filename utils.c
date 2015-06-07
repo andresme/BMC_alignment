@@ -216,7 +216,7 @@ int initMatricesForBlocks(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
                            B[i][j] = 0;
                         break;
                        default:
-                           B[i][j] = j * score_table.gap;
+                           B[i][j] = j * score_table.continue_block_cost + score_table.new_block_cost;
                         break;
                 }
             }
@@ -230,7 +230,7 @@ int initMatricesForBlocks(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
                 switch(v_type){
                     case penalty_left_free_right:
                     case penalty_left_penalty_right:
-                        C[i][j] = i * score_table.gap;
+                        C[i][j] = i * score_table.continue_block_cost + score_table.new_block_cost;
                         break;
                     default:
                         C[i][j] = 0;
@@ -240,7 +240,7 @@ int initMatricesForBlocks(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
         }
     }
 
-    return 1;
+    return initDirectionsMatrix();
 }
 
 bool shouldFill(int i, int j){
