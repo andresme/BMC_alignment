@@ -1,4 +1,4 @@
-#!/usr/bin/gnuplot
+#!/usr/local/bin/gnuplot
 reset
 
 set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 0.75   # --- blue

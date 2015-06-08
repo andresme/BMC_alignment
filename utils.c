@@ -451,8 +451,8 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     printf("count: %d\n", count);
 
     //printf("count: %d\n", count);
-    string_alignment.v_string = (char *) malloc(count * sizeof(char));
-    string_alignment.w_string = (char *) malloc(count * sizeof(char));
+    string_alignment.v_string = (char *) malloc((count+1) * sizeof(char));
+    string_alignment.w_string = (char *) malloc((count+1) * sizeof(char));
 
     i = max_i;
     j = max_j;
@@ -489,20 +489,20 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     while(i >= 0 && j >= 0){
       fprintf(path, "%d\t%d\n", j, max_i-i+error_i);
         if(I_direction[i][j] == TOP_LEFT){
-            string_alignment.v_string[str_index] = seq_v[j-1];
+            string_alignment.v_string[str_index] = seq_v[j-1] = seq_v[j-1];
             string_alignment.w_string[str_index] = seq_w[i-1];
-            printf("%c , %c : %d\n", seq_v[j-1], seq_w[i-1], str_index);
+            printf("%c , %c : %d\n", string_alignment.v_string[str_index], string_alignment.w_string[str_index], str_index);
             i = i-1;
             j = j-1;
         } else if(I_direction[i][j] == TOP){
             string_alignment.v_string[str_index] = '-';
             string_alignment.w_string[str_index] = seq_w[i-1];
-            printf("%c , %c : %d\n", '-', seq_w[i-1], str_index);
+            printf("%c , %c : %d\n", string_alignment.v_string[str_index], string_alignment.w_string[str_index], str_index);
             i = i-1;
         } else if(I_direction[i][j] == LEFT){
             string_alignment.v_string[str_index] = seq_v[j-1];
             string_alignment.w_string[str_index] = '-';
-            printf("%c , %c : %d\n", seq_v[j-1], '-', str_index);
+            printf("%c , %c : %d\n", string_alignment.v_string[str_index], string_alignment.w_string[str_index], str_index);
             j = j-1;
         } else {
             break;
@@ -514,6 +514,15 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     string_alignment.v_string[count] = '\0';
     string_alignment.w_string[count] = '\0';
 
-    plotWithGnu();
     printf("%s\n%s\n", string_alignment.v_string, string_alignment.w_string);
+
+    plotWithGnu();
+    // for(int i = 0; i < count; i++){
+    //   printf("%c,", string_alignment.v_string[i]);
+    // }
+    // printf("\n");
+    // for(int i = 0; i < count; i++){
+    //   printf("%c,", string_alignment.w_string[i]);
+    // }
+
 }

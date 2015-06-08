@@ -251,13 +251,19 @@ void *p_NeedlemanWunsch(void *ptr_to_tdata) {
     int i, j, wave, tStart, tEnd;
     array_max_t arraymax;
 
-    tStart = ((td->jmax / td->numThreads) * td->thread_id) + 1;
-    tEnd = tStart + (td->jmax / td->numThreads);
+    tStart = (ceil(((float)td->jmax / (float)td->numThreads)) * td->thread_id)+1;
+    tEnd = (ceil(((float)td->jmax / (float)td->numThreads)) * (td->thread_id+1));
+
+    printf("Hello from thread: %d Numthreads:%d - %d - %d -!\n",td->thread_id,td->numThreads,tStart,tEnd);
+
     for (wave = 1; wave <= td->imax + td->numThreads - 1; wave++) {
         i = wave - td->thread_id;
         if (i >= 1 && i <= td->imax) {
-            for (j = tStart; j < tEnd; j++) {
-                if(!shouldFill(i, j) && td->mode == k_band){
+            for (j = tStart; j <= tEnd; j++) {
+              if(H[i][j] != INT_MIN){
+                continue;
+              }
+                if(td->mode == k_band && !shouldFill(i, j)){
                   continue;
                 }
                 temp[0] = H[i - 1][j - 1] != INT_MIN ? H[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]) : INT_MIN;
@@ -278,16 +284,16 @@ void *p_NeedlemanWunsch(void *ptr_to_tdata) {
                         break;
                 }
             }
-            pthread_mutex_lock(&mutexWait);
-            waitingThreads--;
-            if (waitingThreads > 0) {
-                pthread_cond_wait(&condWait, &mutexWait);
-            } else {
-                waitingThreads = td->numThreads;
-                pthread_cond_broadcast(&condWait);
-            }
-            pthread_mutex_unlock(&mutexWait);
         }
+        pthread_mutex_lock(&mutexWait);
+        waitingThreads--;
+        if (waitingThreads > 0) {
+            pthread_cond_wait(&condWait, &mutexWait);
+        } else {
+            waitingThreads = td->numThreads;
+            pthread_cond_broadcast(&condWait);
+        }
+        pthread_mutex_unlock(&mutexWait);
     }
     return ((void *) 0);
 }
