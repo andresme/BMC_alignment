@@ -343,20 +343,20 @@ void clear(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
 void plotWithGnu(){
   int status;
     // By calling fork(), a child process will be created as a exact duplicate of the calling process.
-    // Search for fork() (maybe "man fork" on Linux) for more information.
-    if(seq_w_size > 20 || seq_v_size > 20){
+    // // Search for fork() (maybe "man fork" on Linux) for more information.
+    // if(seq_w_size > 20 || seq_v_size > 20){
+    //   if(fork() == 0){
+    //     // Child process will return 0 from fork()
+    //     status = system("./gnuplot_large.gp");
+    //     exit(0);
+    //   }
+    // } else {
       if(fork() == 0){
         // Child process will return 0 from fork()
         status = system("./gnuplot_large.gp");
         exit(0);
       }
-    } else {
-      if(fork() == 0){
-        // Child process will return 0 from fork()
-        status = system("./gnuplot.gp");
-        exit(0);
-      }
-    }
+    // }
 }
 
 void printMatrixToFile(char *fileName, int **matrix){

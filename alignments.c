@@ -131,7 +131,6 @@ void *p_SmithWaterman(void *ptr_to_tdata) {
                 }
             }
         }
-        printf("stop\n");
         pthread_mutex_lock(&mutexWait);
         waitingThreads--;
         if (waitingThreads > 0) {
@@ -141,7 +140,6 @@ void *p_SmithWaterman(void *ptr_to_tdata) {
             pthread_cond_broadcast(&condWait);
         }
         pthread_mutex_unlock(&mutexWait);
-        printf("continue\n");
     }
     return ((void *) 0);
 }
