@@ -28,7 +28,7 @@ void runThreads(void *(*__start_routine)(void *), int threads, enum ALIGNMENT_MO
 }
 
 void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_string, char *w_string, enum ALIGNMENT_MODE mode, int threads, int initial_k, int adjust_k) {
-    initStart(threads, v_string, w_string);
+    initStart(v_string, w_string);
     if (mode == gap_blocks){
         initMatricesForBlocks(v_type, w_type);
     } else {
@@ -65,7 +65,7 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
 }
 
 void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, int threads) {
-  initStart(threads, v_string, w_string);
+  initStart(v_string, w_string);
   if (mode == gap_blocks){
       initMatricesForBlocks(free_left_free_right, free_left_free_right);
   } else {

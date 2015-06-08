@@ -41,7 +41,7 @@ int similarity_score(char a, char b) {
   }
 }
 
-int initStart(int numThreads, char *v_string, char *w_string){
+int initStart(char *v_string, char *w_string){
     seq_v_size = (int) strlen(v_string);
     seq_w_size = (int) strlen(w_string);
 
@@ -50,7 +50,7 @@ int initStart(int numThreads, char *v_string, char *w_string){
 
     if(seq_v == NULL || seq_w == NULL){
       printf("Could not alloc strings\n");
-      exit(-1);
+      return -1;
     }
 
     strcpy(seq_v, v_string);
@@ -480,7 +480,7 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
 
     printMatrixToFile("temp_matrix.dat", H);
     string_alignment.best_score = H[seq_w_size][seq_v_size];
-    
+
     FILE *path = fopen("temp_lines.dat", "w");
     if (path == NULL) {
       printf("Error opening file!\n");
