@@ -1,131 +1,5 @@
 #include "alignments.h"
 
-void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
-    int max_i = seq_w_size;
-    int max_j = seq_v_size;
-
-    //printMatrix(I_direction);
-
-    bool v_type_value = v_type == free_left_free_right || v_type == penalty_left_free_right;
-    bool w_type_value = w_type == free_left_free_right || w_type == penalty_left_free_right;
-    int temp = H[seq_w_size][seq_v_size];
-    if (v_type_value && w_type_value) {
-        for (int i = seq_w_size; i > 0; i--) {
-            for (int j = seq_v_size; j > 0; j--) {
-                if (H[seq_w_size][j] > temp) {
-                    temp = H[seq_w_size][j];
-                    max_i = seq_w_size;
-                    max_j = j;
-                }
-            }
-            if (H[i][seq_v_size] > temp) {
-                temp = H[i][seq_v_size];
-                max_i = i;
-                max_j = seq_v_size;
-            }
-        }
-    } else if (v_type_value) {
-        for (int j = seq_v_size; j > 0; j--) {
-            if (H[seq_w_size][j] > temp) {
-                temp = H[seq_w_size][j];
-                max_j = j;
-            }
-        }
-    } else if (w_type_value) {
-        for (int i = seq_w_size; i > 0; i--) {
-            if (H[i][seq_v_size] > temp) {
-                temp = H[i][seq_v_size];
-                max_i = i;
-            }
-        }
-    }
-    printf("%d,%d\n", max_i, max_j);
-
-    int i = max_i;
-    int j = max_j;
-    int count = 0;
-    while(i >= 0 && j >= 0){
-        if(I_direction[i][j] == TOP_LEFT){
-          //printf("Top left\n");
-            i = i-1;
-            j = j-1;
-        } else if(I_direction[i][j] == TOP){
-        //  printf("Top\n");
-            i = i-1;
-        } else if(I_direction[i][j] == LEFT){
-        //  printf("Left\n");
-            j = j-1;
-        } else {
-            break;
-        }
-        count++;
-    }
-    //printf("count: %d\n", count);
-
-    if(count < seq_w_size){
-      count += seq_w_size - count;
-    }
-    if(count < seq_v_size){
-      count += seq_v_size - count;
-    }
-
-    //printf("count: %d\n", count);
-    string_alignment.v_string = (char *) malloc(count * sizeof(char));
-    string_alignment.w_string = (char *) malloc(count * sizeof(char));
-
-    i = max_i;
-    j = max_j;
-    int str_index = count-1;
-
-    temp = 0;
-    while(seq_w_size - temp >= i+1){
-      string_alignment.v_string[str_index] = '-';
-      string_alignment.w_string[str_index] = seq_w[seq_w_size - temp - 1];
-      //printf("%c , %c : %d\n", '-', seq_w[seq_w_size-temp-1], str_index);
-      temp++;
-      str_index--;
-    }
-
-    temp = 0;
-    while(seq_v_size - temp >= j+1){
-      string_alignment.v_string[str_index] = seq_v[seq_v_size - temp - 1];
-      string_alignment.w_string[str_index] = '-';
-      //printf("%c , %c : %d\n", seq_v[seq_v_size-temp-1], '-', str_index);
-      temp++;
-      str_index--;
-    }
-
-
-    while(i >= 0 && j >= 0){
-      //printf("%d, %d\n", i, j);
-        if(I_direction[i][j] == TOP_LEFT){
-            string_alignment.v_string[str_index] = seq_v[j-1];
-            string_alignment.w_string[str_index] = seq_w[i-1];
-            //printf("%c , %c : %d\n", seq_v[j-1], seq_w[i-1], str_index);
-            i = i-1;
-            j = j-1;
-        } else if(I_direction[i][j] == TOP){
-            string_alignment.v_string[str_index] = '-';
-            string_alignment.w_string[str_index] = seq_w[i-1];
-            //printf("%c , %c : %d\n", '-', seq_w[i-1], str_index);
-            i = i-1;
-        } else if(I_direction[i][j] == LEFT){
-            string_alignment.v_string[str_index] = seq_v[j-1];
-            string_alignment.w_string[str_index] = '-';
-            //printf("%c , %c : %d\n", seq_v[j-1], '-', str_index);
-            j = j-1;
-        } else {
-            break;
-        }
-        str_index--;
-    }
-    string_alignment.v_string[count] = '\0';
-    string_alignment.w_string[count] = '\0';
-
-
-    printf("%s\n%s\n", string_alignment.v_string, string_alignment.w_string);
-}
-
 
 void runThreads(void *(*__start_routine)(void *), int threads, enum ALIGNMENT_MODE mode) {
     clock_t t1, t2;
@@ -183,8 +57,6 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
 
     pthread_mutex_destroy(&mutexWait);
     pthread_cond_destroy(&condWait);
-
-    printMatrix(H);
 
     getAlignment(v_type, w_type);
 }
@@ -331,7 +203,7 @@ void *p_SmithWatermanBlocks(void *ptr_to_tdata) {
                         break;
                 }
 
-                tempC[0] = H[i][j - 1] + score_table.continue_block_cost + score_table.new_block_cost; 
+                tempC[0] = H[i][j - 1] + score_table.continue_block_cost + score_table.new_block_cost;
                 tempC[1] = B[i][j - 1] + score_table.continue_block_cost + score_table.new_block_cost;
                 tempC[2] = C[i][j - 1] + score_table.continue_block_cost;
                 tempC[3] = 0;

@@ -14,5 +14,6 @@ void clear(enum GAP_TYPE v_type, enum GAP_TYPE w_type);
 void init_k_band(enum GAP_TYPE v_type, enum GAP_TYPE w_type);
 void printMatrix(int **matrix);
 int initMatricesForBlocks(enum GAP_TYPE v_type, enum GAP_TYPE w_type);
+void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type);
 
 #endif //ALIGNMENT_UTILS_H
