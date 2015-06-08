@@ -1,6 +1,6 @@
 #include "encodeUtils.h"
 
-
+//remember to free result somewhere
 char *encodeDnaToProtein(char *dna){
   int size = strlen(dna);
   char *result = (char *) malloc(((size/3) + 1) * sizeof(char));
@@ -243,6 +243,7 @@ char *encodeDnaToProtein(char *dna){
   return result;
 }
 
+//remember to free result somewhere
 char *encodeOneLetter(char *protein){
     int size = (int) strlen(protein);
     int size_one_letter = size/3 + 1;
@@ -296,6 +297,7 @@ char *encodeOneLetter(char *protein){
         result[j] = 'V';
       }
     }
+    free(temp);
     result[size_one_letter] = '\0';
     return result;
 }

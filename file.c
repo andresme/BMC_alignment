@@ -3,11 +3,11 @@
 
 void readMatrixFromFile(char* fileName){
 	FILE *file;
-    char content[2048], *pch;
+  char content[2048], *pch;
 	file = fopen(fileName, "r");
 	if(file == NULL){
-		printf("Error reading file \n");
-		exit(1);
+			printf("Error reading file \n");
+			return;
     }
     score_table.type = 1;
     score_table.table = (int**) malloc(20*sizeof(int*));
@@ -19,7 +19,7 @@ void readMatrixFromFile(char* fileName){
     while(fgets(content, 2048, file)){
         pch = strtok (content, ",");
         while (pch != NULL){
-			score_table.table[i][j] = atoi(pch);
+						score_table.table[i][j] = atoi(pch);
             pch = strtok(NULL, ",");
             j++;
         }
@@ -28,6 +28,7 @@ void readMatrixFromFile(char* fileName){
 		fclose(file);
 }
 
+//remember to free result somewhere
 char *readStringFromFile(char *fileName){
 	FILE *fp;
 	long lSize;
@@ -36,7 +37,7 @@ char *readStringFromFile(char *fileName){
 	fp = fopen (fileName, "rb");
 	if(!fp) {
 		printf("Error reading file \n");
-		exit(1);
+		return NULL;
 	}
 
 	fseek(fp, 0L, SEEK_END);

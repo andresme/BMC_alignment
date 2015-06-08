@@ -479,7 +479,8 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
 
 
     printMatrixToFile("temp_matrix.dat", H);
-
+    string_alignment.best_score = H[seq_w_size][seq_v_size];
+    
     FILE *path = fopen("temp_lines.dat", "w");
     if (path == NULL) {
       printf("Error opening file!\n");
@@ -515,14 +516,27 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     string_alignment.w_string[count] = '\0';
 
     printf("%s\n%s\n", string_alignment.v_string, string_alignment.w_string);
-
     plotWithGnu();
-    // for(int i = 0; i < count; i++){
-    //   printf("%c,", string_alignment.v_string[i]);
-    // }
-    // printf("\n");
-    // for(int i = 0; i < count; i++){
-    //   printf("%c,", string_alignment.w_string[i]);
-    // }
 
+}
+
+void freeThreadData(thread_data_t *data){
+    free(data);
+}
+
+void freeStrings(){
+  free(seq_v);
+  free(seq_w);
+}
+
+void freeResults(){
+  free(string_alignment.v_string);
+  free(string_alignment.w_string);
+}
+
+void freeMatrix(int **matrix, int size_i){
+    for(int i = 0; i < size_i; i++){
+      free(matrix[i]);
+    }
+    free(matrix);
 }

@@ -24,6 +24,7 @@ void runThreads(void *(*__start_routine)(void *), int threads, enum ALIGNMENT_MO
 
     float diff = (((float) t2 - (float) t1) / 1000000.0F) * 1000;
     printf("it took: %f ms for %d threads\n", diff, threads);
+    freeThreadData(data);
 }
 
 void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_string, char *w_string, enum ALIGNMENT_MODE mode, int threads, int initial_k, int adjust_k) {
@@ -49,16 +50,18 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
           (seq_v_size - current_k) * score_table.match;
 
       }
-    } else {
-      runThreads(__start_routine, threads, mode);
     }
-
-    // printf("%d,%d = %d\n", seq_w_size - 1, seq_v_size - 1, H[seq_w_size - 1][seq_v_size - 1]);
+    runThreads(__start_routine, threads, mode);
 
     pthread_mutex_destroy(&mutexWait);
     pthread_cond_destroy(&condWait);
 
     getAlignment(v_type, w_type);
+    freeMatrix(H, seq_w_size);
+    freeMatrix(I_direction, seq_w_size);
+    freeStrings();
+    freeResults();
+
 }
 
 void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, int threads) {
