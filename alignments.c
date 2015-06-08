@@ -58,6 +58,10 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
 
     getAlignment(v_type, w_type);
     freeMatrix(H, seq_w_size);
+    if(mode == gap_blocks){
+      freeMatrix(B, seq_w_size);
+      freeMatrix(C, seq_w_size);
+    }
     freeMatrix(I_direction, seq_w_size);
     freeStrings();
     freeResults();
@@ -82,6 +86,14 @@ void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, 
   pthread_cond_destroy(&condWait);
 
   getAlignment(free_left_free_right, free_left_free_right);
+  freeMatrix(H, seq_w_size);
+  if(mode == gap_blocks){
+    freeMatrix(B, seq_w_size);
+    freeMatrix(C, seq_w_size);
+  }
+  freeMatrix(I_direction, seq_w_size);
+  freeStrings();
+  freeResults();
 
 }
 
