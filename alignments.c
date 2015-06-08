@@ -470,7 +470,7 @@ void *p_NeedlemanWunschBlock(void *ptr_to_tdata) {
                 tempC[1] = B[i][j - 1] != INT_MIN ? H[i][j - 1] + score_table.continue_block_cost + score_table.new_block_cost : INT_MIN;
                 tempC[2] = C[i][j - 1] != INT_MIN ? H[i][j - 1] + score_table.continue_block_cost : INT_MIN;
                 arraymax = find_array_max(tempC, 3);
-                H[i][j] = arraymax.max;
+                C[i][j] = arraymax.max;
 
                 switch (arraymax.ind) {
                     case 0:                                  // score in (i,j) stems from a match/mismatch
