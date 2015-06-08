@@ -19,5 +19,6 @@ void freeStrings();
 void freeResults();
 void freeMatrix(int **matrix, int size_i);
 void freeThreadData(thread_data_t *data);
-
+void plotWithGnu();
+void plotWithGnuPath();
 #endif //ALIGNMENT_UTILS_H

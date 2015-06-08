@@ -38,6 +38,8 @@ int similarity_score(char a, char b) {
     } else {
         return score_table.missmatch;
     }
+  } else {
+    return 1;
   }
 }
 
@@ -353,7 +355,26 @@ void plotWithGnu(){
     // } else {
       if(fork() == 0){
         // Child process will return 0 from fork()
-        status = system("./gnuplot_large.gp");
+        status = system("./gnuplot.gp");
+        exit(0);
+      }
+    // }
+}
+
+void plotWithGnuPath(){
+  int status;
+    // By calling fork(), a child process will be created as a exact duplicate of the calling process.
+    // // Search for fork() (maybe "man fork" on Linux) for more information.
+    // if(seq_w_size > 20 || seq_v_size > 20){
+    //   if(fork() == 0){
+    //     // Child process will return 0 from fork()
+    //     status = system("./gnuplot_large.gp");
+    //     exit(0);
+    //   }
+    // } else {
+      if(fork() == 0){
+        // Child process will return 0 from fork()
+        status = system("./gnuplot_path.gp");
         exit(0);
       }
     // }
@@ -514,10 +535,6 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
 
     string_alignment.v_string[count] = '\0';
     string_alignment.w_string[count] = '\0';
-
-    printf("%s\n%s\n", string_alignment.v_string, string_alignment.w_string);
-    plotWithGnu();
-
 }
 
 void freeThreadData(thread_data_t *data){
