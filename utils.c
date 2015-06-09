@@ -38,10 +38,12 @@ int similarity_score(char a, char b) {
     } else {
         return score_table.missmatch;
     }
+  } else {
+    return 1;
   }
 }
 
-int initStart(int numThreads, char *v_string, char *w_string){
+int initStart(char *v_string, char *w_string){
     seq_v_size = (int) strlen(v_string);
     seq_w_size = (int) strlen(w_string);
 
@@ -50,7 +52,7 @@ int initStart(int numThreads, char *v_string, char *w_string){
 
     if(seq_v == NULL || seq_w == NULL){
       printf("Could not alloc strings\n");
-      exit(-1);
+      return -1;
     }
 
     strcpy(seq_v, v_string);
@@ -353,7 +355,26 @@ void plotWithGnu(){
     // } else {
       if(fork() == 0){
         // Child process will return 0 from fork()
-        status = system("./gnuplot_large.gp");
+        status = system("./gnuplot.gp");
+        exit(0);
+      }
+    // }
+}
+
+void plotWithGnuPath(){
+  int status;
+    // By calling fork(), a child process will be created as a exact duplicate of the calling process.
+    // // Search for fork() (maybe "man fork" on Linux) for more information.
+    // if(seq_w_size > 20 || seq_v_size > 20){
+    //   if(fork() == 0){
+    //     // Child process will return 0 from fork()
+    //     status = system("./gnuplot_large.gp");
+    //     exit(0);
+    //   }
+    // } else {
+      if(fork() == 0){
+        // Child process will return 0 from fork()
+        status = system("./gnuplot_path.gp");
         exit(0);
       }
     // }
@@ -365,11 +386,26 @@ void printMatrixToFile(char *fileName, int **matrix){
     printf("Error opening file!\n");
     exit(1);
   }
+
+  fprintf(file, "%c\t", 'e');
+
+  for(int i = 0; i < seq_v_size; i++){
+    fprintf(file, "%c\t", seq_v[i]);
+  }
+  fprintf(file, "\n%c\t", seq_w[seq_w_size-1]);
+
   for(int i = seq_w_size; i >= 0 ; i--){
     for(int j = 0; j <= seq_v_size; j++){
       fprintf(file, "%d\t", matrix[i][j]);
     }
-    fprintf(file, "\n");
+    if(i > 1){
+      fprintf(file, "\n%c\t", seq_w[i-2]);
+    } else if(i == 1){
+        fprintf(file, "\ne\t");
+    }else {
+      fprintf(file, "\n");
+    }
+
   }
   fclose(file);
 }
@@ -451,8 +487,8 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     printf("count: %d\n", count);
 
     //printf("count: %d\n", count);
-    string_alignment.v_string = (char *) malloc(count * sizeof(char));
-    string_alignment.w_string = (char *) malloc(count * sizeof(char));
+    string_alignment.v_string = (char *) malloc((count+1) * sizeof(char));
+    string_alignment.w_string = (char *) malloc((count+1) * sizeof(char));
 
     i = max_i;
     j = max_j;
@@ -479,6 +515,7 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
 
 
     printMatrixToFile("temp_matrix.dat", H);
+    string_alignment.best_score = H[seq_w_size][seq_v_size];
 
     FILE *path = fopen("temp_lines.dat", "w");
     if (path == NULL) {
@@ -489,20 +526,20 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     while(i >= 0 && j >= 0){
       fprintf(path, "%d\t%d\n", j, max_i-i+error_i);
         if(I_direction[i][j] == TOP_LEFT){
-            string_alignment.v_string[str_index] = seq_v[j-1];
+            string_alignment.v_string[str_index] = seq_v[j-1] = seq_v[j-1];
             string_alignment.w_string[str_index] = seq_w[i-1];
-            printf("%c , %c : %d\n", seq_v[j-1], seq_w[i-1], str_index);
+            printf("%c , %c : %d\n", string_alignment.v_string[str_index], string_alignment.w_string[str_index], str_index);
             i = i-1;
             j = j-1;
         } else if(I_direction[i][j] == TOP){
             string_alignment.v_string[str_index] = '-';
             string_alignment.w_string[str_index] = seq_w[i-1];
-            printf("%c , %c : %d\n", '-', seq_w[i-1], str_index);
+            printf("%c , %c : %d\n", string_alignment.v_string[str_index], string_alignment.w_string[str_index], str_index);
             i = i-1;
         } else if(I_direction[i][j] == LEFT){
             string_alignment.v_string[str_index] = seq_v[j-1];
             string_alignment.w_string[str_index] = '-';
-            printf("%c , %c : %d\n", seq_v[j-1], '-', str_index);
+            printf("%c , %c : %d\n", string_alignment.v_string[str_index], string_alignment.w_string[str_index], str_index);
             j = j-1;
         } else {
             break;
@@ -513,7 +550,25 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
 
     string_alignment.v_string[count] = '\0';
     string_alignment.w_string[count] = '\0';
+}
 
-    plotWithGnu();
-    printf("%s\n%s\n", string_alignment.v_string, string_alignment.w_string);
+void freeThreadData(thread_data_t *data){
+    free(data);
+}
+
+void freeStrings(){
+  free(seq_v);
+  free(seq_w);
+}
+
+void freeResults(){
+  free(string_alignment.v_string);
+  free(string_alignment.w_string);
+}
+
+void freeMatrix(int **matrix, int size_i){
+    for(int i = 0; i < size_i; i++){
+      free(matrix[i]);
+    }
+    free(matrix);
 }

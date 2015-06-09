@@ -6,5 +6,6 @@
 
 
 void readMatrixFromFile(char* fileName);
+char *readStringFromFile(char *fileName);
 
 #endif //FILE_H
