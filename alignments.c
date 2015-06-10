@@ -1,7 +1,7 @@
 #include "alignments.h"
 #include <math.h>
 
-void runThreads(void *(*__start_routine)(void *), int threads, enum ALIGNMENT_MODE mode) {
+float runThreads(void *(*__start_routine)(void *), int threads, enum ALIGNMENT_MODE mode) {
     clock_t t1, t2;
 
     void *status;
@@ -23,11 +23,16 @@ void runThreads(void *(*__start_routine)(void *), int threads, enum ALIGNMENT_MO
     t2 = clock();
 
     float diff = (((float) t2 - (float) t1) / 1000000.0F) * 1000;
-    printf("it took: %f ms for %d threads\n", diff, threads);
+    // printf("it took: %f ms for %d threads\n", diff, threads);
     freeThreadData(data);
+    return diff;
 }
 
 void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_string, char *w_string, enum ALIGNMENT_MODE mode, int threads, int initial_k, int adjust_k) {
+  float times[threads];
+  float times_k_band[threads];
+
+  for(int i = 0; i < threads; i++){
     initStart(v_string, w_string);
     if (mode == gap_blocks){
         initMatricesForBlocks(v_type, w_type);
@@ -37,23 +42,29 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
 
     void *(*__start_routine)(void *) = mode == gap_blocks ? p_NeedlemanWunschBlock : p_NeedlemanWunsch;
 
+
+    times[i] = runThreads(__start_routine, i+1, mode);
+
+    clear(v_type, w_type);
+
     if(mode == k_band){
+      times_k_band[i] = 0;
       int best_k_1 = INT_MAX;
       current_k = initial_k;
       while(best_k_1 > H[seq_w_size][seq_v_size]){
         init_k_band(v_type, w_type);
-        runThreads(__start_routine, threads, mode);
+        times_k_band[i] += runThreads(__start_routine, i+1, mode);
 
         current_k += adjust_k;
 
         best_k_1 = (2*current_k + seq_w_size - seq_v_size) * score_table.gap +
           (seq_v_size - current_k) * score_table.match;
 
+          printf("%d > %d\n", best_k_1, H[seq_w_size][seq_v_size]);
       }
-    } else {
-      runThreads(__start_routine, threads, mode);
     }
-    printMatrix(H);
+
+    // printMatrix(H);
     pthread_mutex_destroy(&mutexWait);
     pthread_cond_destroy(&condWait);
 
@@ -66,35 +77,51 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
     freeMatrix(I_direction, seq_w_size);
     freeStrings();
     freeResults();
+  }
+
+    for(int i = 0; i < threads; i++){
+      printf("%d threads took: %f\n", i, times[i]);
+      if(mode == k_band){
+        printf("%d threads took: %f (k bands)\n", i, times_k_band[i]);
+      }
+    }
     plotWithGnuPath();
 }
 
 void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, int threads) {
-  initStart(v_string, w_string);
-  if (mode == gap_blocks){
-      initMatricesForBlocks(free_left_free_right, free_left_free_right);
-  } else {
-      initMatrix(free_left_free_right, free_left_free_right);
+  float times[threads];
+
+  for(int i = 0; i < threads; i++){
+    initStart(v_string, w_string);
+    if (mode == gap_blocks){
+        initMatricesForBlocks(free_left_free_right, free_left_free_right);
+    } else {
+        initMatrix(free_left_free_right, free_left_free_right);
+    }
+
+    void *(*__start_routine)(void *) = mode == gap_blocks ? p_SmithWatermanBlocks : p_SmithWaterman;
+
+    times[i] = runThreads(__start_routine, i+1, mode);
+
+    // printf("%d,%d = %d\n", seq_w_size - 1, seq_v_size - 1, H[seq_w_size - 1][seq_v_size - 1]);
+
+    pthread_mutex_destroy(&mutexWait);
+    pthread_cond_destroy(&condWait);
+
+    getAlignment(free_left_free_right, free_left_free_right);
+    freeMatrix(H, seq_w_size);
+    if(mode == gap_blocks){
+      freeMatrix(B, seq_w_size);
+      freeMatrix(C, seq_w_size);
+    }
+    freeMatrix(I_direction, seq_w_size);
+    freeStrings();
+    freeResults();
+  }
+  for(int i = 0; i < threads; i++){
+    printf("%d threads took: %f\n", i, times[i]);
   }
 
-  void *(*__start_routine)(void *) = mode == gap_blocks ? p_SmithWatermanBlocks : p_SmithWaterman;
-
-  runThreads(__start_routine, threads, mode);
-
-  // printf("%d,%d = %d\n", seq_w_size - 1, seq_v_size - 1, H[seq_w_size - 1][seq_v_size - 1]);
-
-  pthread_mutex_destroy(&mutexWait);
-  pthread_cond_destroy(&condWait);
-
-  getAlignment(free_left_free_right, free_left_free_right);
-  freeMatrix(H, seq_w_size);
-  if(mode == gap_blocks){
-    freeMatrix(B, seq_w_size);
-    freeMatrix(C, seq_w_size);
-  }
-  freeMatrix(I_direction, seq_w_size);
-  freeStrings();
-  freeResults();
 
 }
 
@@ -271,7 +298,7 @@ void *p_NeedlemanWunsch(void *ptr_to_tdata) {
     tStart = (ceil(((float)td->jmax / (float)td->numThreads)) * td->thread_id)+1;
     tEnd = (ceil(((float)td->jmax / (float)td->numThreads)) * (td->thread_id+1));
 
-    printf("Hello from thread: %d Numthreads:%d - %d - %d -!\n",td->thread_id,td->numThreads,tStart,tEnd);
+    // printf("Hello from thread: %d Numthreads:%d - %d - %d -!\n",td->thread_id,td->numThreads,tStart,tEnd);
 
     for (wave = 1; wave <= td->imax + td->numThreads - 1; wave++) {
         i = wave - td->thread_id;
@@ -325,7 +352,7 @@ void *p_NeedlemanWunschBlock(void *ptr_to_tdata) {
 
     tStart = (ceil(((float)td->jmax / (float)td->numThreads)) * td->thread_id)+1;
     tEnd = (ceil(((float)td->jmax / (float)td->numThreads)) * (td->thread_id+1));
-    
+
     for (wave = 1; wave <= td->imax + td->numThreads - 1; wave++) {
         i = wave - td->thread_id;
         if (i >= 1 && i <= td->imax) {
