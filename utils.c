@@ -387,17 +387,22 @@ void printMatrixToFile(char *fileName, int **matrix){
     exit(1);
   }
 
-  for(int i = seq_v_size-1; i >= 0; i--){
+  fprintf(file, "%c\t", 'e');
+
+  for(int i = 0; i < seq_v_size; i++){
     fprintf(file, "%c\t", seq_v[i]);
   }
-  fprintf(file, "e\ne\t");
+  fprintf(file, "\n%c\t", seq_w[seq_w_size-1]);
+
   for(int i = seq_w_size; i >= 0 ; i--){
     for(int j = 0; j <= seq_v_size; j++){
       fprintf(file, "%d\t", matrix[i][j]);
     }
-    if(i > 0){
-      fprintf(file, "\n%c\t", seq_w[seq_w_size-i]);
-    } else {
+    if(i > 1){
+      fprintf(file, "\n%c\t", seq_w[i-2]);
+    } else if(i == 1){
+        fprintf(file, "\ne\t");
+    }else {
       fprintf(file, "\n");
     }
 
