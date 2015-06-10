@@ -321,15 +321,17 @@ void *p_NeedlemanWunschBlock(void *ptr_to_tdata) {
     int i, j, wave, tStart, tEnd;
     array_max_t arraymax;
 
-    tStart = ((td->jmax / td->numThreads) * td->thread_id) + 1;
-    tEnd = tStart + (td->jmax / td->numThreads);
+    tStart = (ceil(((float)td->jmax / (float)td->numThreads)) * td->thread_id)+1;
+    tEnd = (ceil(((float)td->jmax / (float)td->numThreads)) * (td->thread_id+1));
+
     for (wave = 1; wave <= td->imax + td->numThreads - 1; wave++) {
         i = wave - td->thread_id;
         if (i >= 1 && i <= td->imax) {
-            for (j = tStart; j < tEnd; j++) {
+            for (j = tStart; j <= tEnd; j++) {
                 if(!shouldFill(i, j) && td->mode == k_band){
                   continue;
                 }
+
                 tempH[0] = H[i - 1][j - 1] != INT_MIN ? H[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]) : INT_MIN;
                 tempH[1] = B[i - 1][j - 1] != INT_MIN ? B[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]) : INT_MIN;
                 tempH[2] = C[i - 1][j - 1] != INT_MIN ? C[i - 1][j - 1] + similarity_score(seq_w[i - 1], seq_v[j - 1]) : INT_MIN;
@@ -367,11 +369,10 @@ void *p_NeedlemanWunschBlock(void *ptr_to_tdata) {
                 }
 
                 tempC[0] = H[i][j - 1] != INT_MIN ? H[i][j - 1] + score_table.continue_block_cost + score_table.new_block_cost : INT_MIN;
-                tempC[1] = B[i][j - 1] != INT_MIN ? H[i][j - 1] + score_table.continue_block_cost + score_table.new_block_cost : INT_MIN;
-                tempC[2] = C[i][j - 1] != INT_MIN ? H[i][j - 1] + score_table.continue_block_cost : INT_MIN;
+                tempC[1] = B[i][j - 1] != INT_MIN ? B[i][j - 1] + score_table.continue_block_cost + score_table.new_block_cost : INT_MIN;
+                tempC[2] = C[i][j - 1] != INT_MIN ? C[i][j - 1] + score_table.continue_block_cost : INT_MIN;
                 arraymax = find_array_max(tempC, 3);
-                H[i][j] = arraymax.max;
-
+                C[i][j] = arraymax.max;
                 switch (arraymax.ind) {
                     case 0:                                  // score in (i,j) stems from a match/mismatch
                         I_direction[i][j] = LEFT_H;
