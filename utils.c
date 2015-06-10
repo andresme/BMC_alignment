@@ -386,11 +386,21 @@ void printMatrixToFile(char *fileName, int **matrix){
     printf("Error opening file!\n");
     exit(1);
   }
+
+  for(int i = seq_v_size-1; i >= 0; i--){
+    fprintf(file, "%c\t", seq_v[i]);
+  }
+  fprintf(file, "e\ne\t");
   for(int i = seq_w_size; i >= 0 ; i--){
     for(int j = 0; j <= seq_v_size; j++){
       fprintf(file, "%d\t", matrix[i][j]);
     }
-    fprintf(file, "\n");
+    if(i > 0){
+      fprintf(file, "\n%c\t", seq_w[seq_w_size-i]);
+    } else {
+      fprintf(file, "\n");
+    }
+
   }
   fclose(file);
 }

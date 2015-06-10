@@ -40,7 +40,7 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
     if(mode == k_band){
       int best_k_1 = INT_MAX;
       current_k = initial_k;
-      while(best_k_1 > H[seq_w_size - 1][seq_v_size - 1]){
+      while(best_k_1 > H[seq_w_size][seq_v_size]){
         init_k_band(v_type, w_type);
         runThreads(__start_routine, threads, mode);
 
@@ -50,9 +50,10 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
           (seq_v_size - current_k) * score_table.match;
 
       }
+    } else {
+      runThreads(__start_routine, threads, mode);
     }
-    runThreads(__start_routine, threads, mode);
-
+    printMatrix(H);
     pthread_mutex_destroy(&mutexWait);
     pthread_cond_destroy(&condWait);
 
