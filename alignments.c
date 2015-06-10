@@ -323,8 +323,8 @@ void *p_NeedlemanWunschBlock(void *ptr_to_tdata) {
     array_max_t arraymax;
 
     tStart = (ceil(((float)td->jmax / (float)td->numThreads)) * td->thread_id)+1;
-    tEnd = (ceil(((float)td->jmax / (float)td->numThreads)) * (td->thread_id+1));
-
+    tEnd = (ceil(((float)td->jmax / (float)td->numThreads)) * (td->thread_id+1));
+    
     for (wave = 1; wave <= td->imax + td->numThreads - 1; wave++) {
         i = wave - td->thread_id;
         if (i >= 1 && i <= td->imax) {
