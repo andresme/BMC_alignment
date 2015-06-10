@@ -42,12 +42,10 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
 
     void *(*__start_routine)(void *) = mode == gap_blocks ? p_NeedlemanWunschBlock : p_NeedlemanWunsch;
 
-
     times[i] = runThreads(__start_routine, i+1, mode);
 
-    clear(v_type, w_type);
-
     if(mode == k_band){
+      clear(v_type, w_type);
       times_k_band[i] = 0;
       int best_k_1 = INT_MAX;
       current_k = initial_k;
@@ -63,6 +61,8 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
           printf("%d > %d\n", best_k_1, H[seq_w_size][seq_v_size]);
       }
     }
+
+
 
     // printMatrix(H);
     pthread_mutex_destroy(&mutexWait);
