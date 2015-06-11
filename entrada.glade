@@ -195,10 +195,12 @@ por medio de un archivo</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkLabel" id="label11">
+                              <object class="GtkButton" id="loadH1">
+                                <property name="label" translatable="yes">Cargar Hilera 1</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="width_chars">13</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="yalign">0.49000000953674316</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -207,23 +209,14 @@ por medio de un archivo</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="loadFile">
-                                <property name="label" translatable="yes">Cargar</property>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="loadH2">
+                                <property name="label" translatable="yes">Cargar Hilera 2</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="label12">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="width_chars">13</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
