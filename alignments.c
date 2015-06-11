@@ -62,13 +62,14 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
       }
     }
 
-
-
-    // printMatrix(H);
     pthread_mutex_destroy(&mutexWait);
     pthread_cond_destroy(&condWait);
 
-    getAlignment(v_type, w_type);
+    if (mode == gap_blocks){
+        getAlignmentBlock(v_type, w_type);
+    } else {
+        getAlignment(v_type, w_type);
+    }
     freeMatrix(H, seq_w_size);
     if(mode == gap_blocks){
       freeMatrix(B, seq_w_size);

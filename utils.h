@@ -21,4 +21,5 @@ void freeMatrix(int **matrix, int size_i);
 void freeThreadData(thread_data_t *data);
 void plotWithGnu();
 void plotWithGnuPath();
+void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type);
 #endif //ALIGNMENT_UTILS_H

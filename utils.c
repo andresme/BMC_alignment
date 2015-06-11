@@ -552,6 +552,236 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     string_alignment.w_string[count] = '\0';
 }
 
+void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
+    printf("GET ALIGNMENT BLOCK\n");
+    int max_i_H = seq_w_size;
+    int max_j_H = seq_v_size;
+    int max_i_B = seq_w_size;
+    int max_j_B = seq_v_size;
+    int max_i_C = seq_w_size;
+    int max_j_C = seq_v_size;
+    int error_i = 0;
+    int error_j = 0;
+
+    bool v_type_value = v_type == free_left_free_right || v_type == penalty_left_free_right;
+    bool w_type_value = w_type == free_left_free_right || w_type == penalty_left_free_right;
+    int temp = H[seq_w_size][seq_v_size];
+    if (v_type_value && w_type_value) {
+        for (int i = seq_w_size; i > 0; i--) {
+            for (int j = seq_v_size; j > 0; j--) {
+                if (H[seq_w_size][j] > temp) {
+                    temp = H[seq_w_size][j];
+                    max_i_H = seq_w_size;
+                    max_j_H = j;
+                }
+            }
+            if (H[i][seq_v_size] > temp) {
+                temp = H[i][seq_v_size];
+                max_i_H = i; 
+                max_j_H = seq_v_size;
+            }
+        }
+    } else if (v_type_value) {
+        for (int j = seq_v_size; j > 0; j--) {
+            if (H[seq_w_size][j] > temp) {
+                temp = H[seq_w_size][j];
+                max_j_H = j;
+            }
+        }
+    } else if (w_type_value) {
+        for (int i = seq_w_size; i > 0; i--) {
+            if (H[i][seq_v_size] > temp) {
+                temp = H[i][seq_v_size];
+                max_i_H = i;
+            }
+        }
+    }
+
+    temp = B[seq_w_size][seq_v_size];
+    if (v_type_value && w_type_value) {
+        for (int i = seq_w_size; i > 0; i--) {
+            for (int j = seq_v_size; j > 0; j--) {
+                if (B[seq_w_size][j] > temp) {
+                    temp = H[seq_w_size][j];
+                    max_i_B = seq_w_size;
+                    max_j_B = j;
+                }
+            }
+            if (B[i][seq_v_size] > temp) {
+                temp = B[i][seq_v_size];
+                max_i_B = i; 
+                max_j_B = seq_v_size;
+            }
+        }
+    } else if (v_type_value) {
+        for (int j = seq_v_size; j > 0; j--) {
+            if (B[seq_w_size][j] > temp) {
+                temp = B[seq_w_size][j];
+                max_j_B = j;
+            }
+        }
+    } else if (w_type_value) {
+        for (int i = seq_w_size; i > 0; i--) {
+            if (B[i][seq_v_size] > temp) {
+                temp = B[i][seq_v_size];
+                max_i_B = i;
+            }
+        }
+    }
+
+    temp = C[seq_w_size][seq_v_size];
+    if (v_type_value && w_type_value) {
+        for (int i = seq_w_size; i > 0; i--) {
+            for (int j = seq_v_size; j > 0; j--) {
+                if (C[seq_w_size][j] > temp) {
+                    temp = C[seq_w_size][j];
+                    max_i_C = seq_w_size;
+                    max_j_C = j;
+                }
+            }
+            if (C[i][seq_v_size] > temp) {
+                temp = C[i][seq_v_size];
+                max_i_C = i; 
+                max_j_C = seq_v_size;
+            }
+        }
+    } else if (v_type_value) {
+        for (int j = seq_v_size; j > 0; j--) {
+            if (C[seq_w_size][j] > temp) {
+                temp = C[seq_w_size][j];
+                max_j_C = j;
+            }
+        }
+    } else if (w_type_value) {
+        for (int i = seq_w_size; i > 0; i--) {
+            if (C[i][seq_v_size] > temp) {
+                temp = C[i][seq_v_size];
+                max_i_C = i;
+            }
+        }
+    }
+
+    printf("GOT MAX\n");
+
+    int **currentMatrix;
+    int i, aux_i;
+    int j, aux_j;
+
+    int maxPerTable[3] = {H[max_i_H][max_j_H], B[max_i_B][max_j_B], C[max_i_C][max_j_C]};
+    array_max_t arraymax = find_array_max(maxPerTable, 3);
+    switch (arraymax.ind) {
+        case 0:
+            currentMatrix = H;
+            i = aux_i = max_i_H;
+            j = aux_j = max_j_H;
+            break;
+        case 1: 
+            currentMatrix = B;
+            i = aux_i = max_i_B;
+            j = aux_j = max_j_B;
+            break;
+        case 2:
+            currentMatrix = C;
+            i = aux_i = max_i_C;
+            j = aux_j = max_j_C;
+            break;
+    }
+    
+    int count = 0;
+    while(aux_i >= 0 && aux_j >= 0){
+        switch(I_direction[aux_i][aux_j]){
+            case TOP_LEFT_H:
+            case TOP_LEFT_B:
+            case TOP_LEFT_C:
+                aux_i--;
+                aux_j--;
+                break;
+            case TOP_H:
+            case TOP_B:
+            case TOP_C:
+                aux_i--;
+                break;
+            case LEFT_H:
+            case LEFT_B:
+            case LEFT_C:
+                aux_j--;
+                break;
+        }
+        count++;
+    }
+
+    if(i < seq_w_size){
+      error_i = seq_w_size-i;
+      count += error_i;
+    } else if(j < seq_v_size){
+      error_j = seq_v_size-j;
+      count += error_j;
+    }
+
+    string_alignment.v_string = (char *) malloc((count+1) * sizeof(char));
+    string_alignment.w_string = (char *) malloc((count+1) * sizeof(char));
+
+    int str_index = count-1;
+
+    temp = 0;
+    while(seq_w_size - temp >= i+1){
+      string_alignment.v_string[str_index] = '-';
+      string_alignment.w_string[str_index] = seq_w[seq_w_size - temp - 1];
+      temp++;
+      str_index--;
+    }
+
+    temp = 0;
+    while(seq_v_size - temp >= j+1){
+      string_alignment.v_string[str_index] = seq_v[seq_v_size - temp - 1];
+      string_alignment.w_string[str_index] = '-';
+      temp++;
+      str_index--;
+    }
+
+    // printMatrixToFile("temp_matrix_H.dat", H);
+
+    string_alignment.best_score = arraymax.max;
+
+    FILE *path = fopen("temp_lines.dat", "w");
+    if (path == NULL) {
+      printf("Error opening file!\n");
+      exit(1);
+    }
+
+    while(i >= 0 && j >= 0){
+        switch(I_direction[aux_i][aux_j]){
+            case TOP_LEFT_H:
+            case TOP_LEFT_B:
+            case TOP_LEFT_C:
+                string_alignment.v_string[str_index] = seq_v[j-1] = seq_v[j-1];
+                string_alignment.w_string[str_index] = seq_w[i-1];
+                i--;
+                j--;
+                break;
+            case TOP_H:
+            case TOP_B:
+            case TOP_C:
+                string_alignment.v_string[str_index] = '-';
+                string_alignment.w_string[str_index] = seq_w[i-1];
+                i--;
+                break;
+            case LEFT_H:
+            case LEFT_B:
+            case LEFT_C:
+                string_alignment.v_string[str_index] = seq_v[j-1];
+                string_alignment.w_string[str_index] = '-';
+                j--;
+                break;
+        }
+        str_index--;
+    }
+    fclose(path);
+
+    string_alignment.v_string[count] = '\0';
+    string_alignment.w_string[count] = '\0';
+}
+
 void freeThreadData(thread_data_t *data){
     free(data);
 }
