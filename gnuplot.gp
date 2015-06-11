@@ -1,5 +1,8 @@
 #!/usr/bin/gnuplot
 reset
+set key off
+set title "Value Matrix"
+
 set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 ps 0.75   # --- blue
 YTICS="`awk 'BEGIN{getline}{printf "%s ",$1}' temp_matrix.dat`"
 XTICS="`head -1 temp_matrix.dat`"

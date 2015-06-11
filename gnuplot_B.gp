@@ -8,6 +8,6 @@ YTICS="`awk 'BEGIN{getline}{printf "%s ",$1}' temp_matrix.dat`"
 XTICS="`head -1 temp_matrix.dat`"
 set for [i=1:words(XTICS)] xtics ( word(XTICS,i) i-1 )
 set for [i=1:words(YTICS)] ytics ( word(YTICS,i) i-1 )
-plot "<awk '{$1=\"\"}1' temp_matrix.dat | sed '1 d'"  matrix w image, 'temp_lines.dat' with linespoints ls 1
+plot "<awk '{$1=\"\"}1' temp_matrix_B.dat | sed '1 d'"  matrix w image
 set datafile separator
 pause -1

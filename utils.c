@@ -344,41 +344,70 @@ void clear(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
 
 void plotWithGnu(){
   int status;
-    // By calling fork(), a child process will be created as a exact duplicate of the calling process.
-    // // Search for fork() (maybe "man fork" on Linux) for more information.
-    // if(seq_w_size > 20 || seq_v_size > 20){
-    //   if(fork() == 0){
-    //     // Child process will return 0 from fork()
-    //     status = system("./gnuplot_large.gp");
-    //     exit(0);
-    //   }
-    // } else {
-      if(fork() == 0){
-        // Child process will return 0 from fork()
-        status = system("./gnuplot.gp");
-        exit(0);
-      }
-    // }
+  if(fork() == 0){
+    status = system("./gnuplot.gp");
+    exit(0);
+  }
 }
 
 void plotWithGnuPath(){
   int status;
-    // By calling fork(), a child process will be created as a exact duplicate of the calling process.
-    // // Search for fork() (maybe "man fork" on Linux) for more information.
-    // if(seq_w_size > 20 || seq_v_size > 20){
-    //   if(fork() == 0){
-    //     // Child process will return 0 from fork()
-    //     status = system("./gnuplot_large.gp");
-    //     exit(0);
-    //   }
-    // } else {
-      if(fork() == 0){
-        // Child process will return 0 from fork()
-        status = system("./gnuplot_path.gp");
-        exit(0);
-      }
-    // }
+  if(fork() == 0){
+    status = system("./gnuplot_path.gp");
+    exit(0);
+  }
 }
+
+void plotWithGnuB(){
+  int status;
+  if(fork() == 0){
+    status = system("./gnuplot_B.gp");
+    exit(0);
+  }
+}
+
+void plotWithGnuPathB(){
+  int status;
+  if(fork() == 0){
+    status = system("./gnuplot_path_B.gp");
+    exit(0);
+  }
+}
+
+void plotWithGnuC(){
+  int status;
+  if(fork() == 0){
+    status = system("./gnuplot_C.gp");
+    exit(0);
+  }
+}
+
+void plotWithGnuPathC(){
+  int status;
+  if(fork() == 0){
+    status = system("./gnuplot_path_C.gp");
+    exit(0);
+  }
+}
+
+void plotTimesKBand(){
+  int status;
+  if(fork() == 0){
+    status = system("./gnuplot_times_k_band.gp");
+    exit(0);
+  }
+}
+
+
+void plotTimes(){
+  int status;
+  if(fork() == 0){
+    status = system("./gnuplot_times.gp");
+    exit(0);
+  }
+}
+
+
 
 void printMatrixToFile(char *fileName, int **matrix){
   FILE *file = fopen(fileName, "w");
@@ -396,7 +425,11 @@ void printMatrixToFile(char *fileName, int **matrix){
 
   for(int i = seq_w_size; i >= 0 ; i--){
     for(int j = 0; j <= seq_v_size; j++){
-      fprintf(file, "%d\t", matrix[i][j]);
+      if(matrix[i][j] == INT_MIN){
+        fprintf(file, "%f\t", NAN);
+      } else{
+        fprintf(file, "%d\t", matrix[i][j]);
+      }
     }
     if(i > 1){
       fprintf(file, "\n%c\t", seq_w[i-2]);
@@ -408,6 +441,20 @@ void printMatrixToFile(char *fileName, int **matrix){
 
   }
   fclose(file);
+}
+
+void writeTimesToFile(float times[], int threads, char *fileName){
+  printf("here\n");
+  FILE *file = fopen(fileName, "w");
+  if (file == NULL) {
+    printf("Error opening file!\n");
+    exit(1);
+  }
+
+  for(int i = 0; i < threads; i++){
+    fprintf(file, "%d\t%f\n", i+1, times[i]);
+  }
+
 }
 
 void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
