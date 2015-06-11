@@ -358,6 +358,38 @@ void plotWithGnuPath(){
   }
 }
 
+void plotWithGnuB(){
+  int status;
+  if(fork() == 0){
+    status = system("./gnuplot_B.gp");
+    exit(0);
+  }
+}
+
+void plotWithGnuPathB(){
+  int status;
+  if(fork() == 0){
+    status = system("./gnuplot_path_B.gp");
+    exit(0);
+  }
+}
+
+void plotWithGnuC(){
+  int status;
+  if(fork() == 0){
+    status = system("./gnuplot_C.gp");
+    exit(0);
+  }
+}
+
+void plotWithGnuPathC(){
+  int status;
+  if(fork() == 0){
+    status = system("./gnuplot_path_C.gp");
+    exit(0);
+  }
+}
+
 void plotTimesKBand(){
   int status;
   if(fork() == 0){

@@ -25,4 +25,8 @@ void plotWithGnu();
 void plotWithGnuPath();
 void plotTimesKBand();
 void plotTimes();
+void plotWithGnuB();
+void plotWithGnuPathB();
+void plotWithGnuC();
+void plotWithGnuPathC();
 #endif //ALIGNMENT_UTILS_H
