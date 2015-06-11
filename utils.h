@@ -3,6 +3,7 @@
 
 #include "globals.h"
 #include <stdlib.h>
+#include <math.h>
 
 thread_data_t *setup_thread_data(int num_threads, int imax, int jmax, enum ALIGNMENT_MODE mode);
 array_max_t find_array_max(int temp[], int size);
@@ -19,6 +20,9 @@ void freeStrings();
 void freeResults();
 void freeMatrix(int **matrix, int size_i);
 void freeThreadData(thread_data_t *data);
+void writeTimesToFile(float times[], int threads, char *fileName);
 void plotWithGnu();
 void plotWithGnuPath();
+void plotTimesKBand();
+void plotTimes();
 #endif //ALIGNMENT_UTILS_H

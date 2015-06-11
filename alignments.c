@@ -1,5 +1,5 @@
 #include "alignments.h"
-#include <math.h>
+
 
 float runThreads(void *(*__start_routine)(void *), int threads, enum ALIGNMENT_MODE mode) {
     clock_t t1, t2;
@@ -86,6 +86,14 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
       }
     }
     plotWithGnuPath();
+
+    writeTimesToFile(times, threads, "temp_times.dat");
+    if(mode == k_band){
+      writeTimesToFile(times_k_band, threads, "temp_times_k_band.dat");
+      plotTimesKBand();
+    } else {
+      plotTimes();
+    }
 }
 
 void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, int threads) {
@@ -122,6 +130,9 @@ void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, 
     printf("%d threads took: %f\n", i, times[i]);
   }
 
+  plotWithGnu();
+  writeTimesToFile(times, threads, "temp_times.dat");
+  plotTimes();
 
 }
 
