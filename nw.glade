@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.16.1 -->
+<!-- Generated with glade 3.18.3 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkWindow" id="nw">
@@ -195,7 +195,7 @@ de la banda:</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="valueK3">
+                      <object class="GtkEntry" id="ampB">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                       </object>
@@ -258,7 +258,7 @@ de la banda:</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="valueK1">
+                      <object class="GtkEntry" id="valueg">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                       </object>
@@ -293,7 +293,7 @@ de la banda:</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="valueK2">
+                      <object class="GtkEntry" id="valueh">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                       </object>
