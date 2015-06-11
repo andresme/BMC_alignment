@@ -30,6 +30,49 @@ array_max_t find_array_max(int temp[], int size) {
 
 
 
+int getIndexFromChar(char c){
+  if(c == 'A'){
+    return 0;
+  } else if(c == 'C'){
+    return 1;
+  } else if(c == 'D'){
+    return 2;
+  } else if(c == 'E'){
+    return 3;
+  } else if(c == 'F'){
+    return 4;
+  } else if(c == 'G'){
+    return 5;
+  } else if(c == 'H'){
+    return 6;
+  } else if(c == 'I'){
+    return 7;
+  } else if(c == 'K'){
+    return 8;
+  } else if(c == 'L'){
+    return 9;
+  } else if(c == 'M'){
+    return 10;
+  } else if(c == 'N'){
+    return 11;
+  } else if(c == 'P'){
+    return 12;
+  } else if(c == 'Q'){
+    return 13;
+  } else if(c == 'R'){
+    return 14;
+  } else if(c == 'S'){
+    return 15;
+  } else if(c == 'T'){
+    return 16;
+  } else if(c == 'V'){
+    return 17;
+  } else if(c == 'W'){
+    return 18;
+  } else if(c == 'Y'){
+    return 19;
+  }
+}
 
 int similarity_score(char a, char b) {
   if(score_table.type == 0){
@@ -39,7 +82,9 @@ int similarity_score(char a, char b) {
         return score_table.missmatch;
     }
   } else {
-    return 1;
+    int i = getIndexFromChar(a);
+    int j = getIndexFromChar(b);
+    return score_table.table[i][j];
   }
 }
 
