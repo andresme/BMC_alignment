@@ -78,6 +78,8 @@ int waitingThreads;
 int startedThreads;
 
 int **I_direction;
+int **B_direction;
+int **C_direction;
 int **H;
 int **B;
 int **C;

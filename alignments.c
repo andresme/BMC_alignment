@@ -399,13 +399,13 @@ void *p_NeedlemanWunschBlock(void *ptr_to_tdata) {
 
                 switch (arraymax.ind) {
                     case 0:                                  // score in (i,j) stems from a match/mismatch
-                        I_direction[i][j] = TOP_H;
+                        B_direction[i][j] = TOP_H;
                         break;
                     case 1:                                  // score in (i,j) stems from a deletion in sequence V
-                        I_direction[i][j] = TOP_B;
+                        B_direction[i][j] = TOP_B;
                         break;
                     case 2:                                  // score in (i,j) stems from a deletion in sequence W
-                        I_direction[i][j] = TOP_C;
+                        B_direction[i][j] = TOP_C;
                         break;
                 }
 
@@ -416,13 +416,13 @@ void *p_NeedlemanWunschBlock(void *ptr_to_tdata) {
                 C[i][j] = arraymax.max;
                 switch (arraymax.ind) {
                     case 0:                                  // score in (i,j) stems from a match/mismatch
-                        I_direction[i][j] = LEFT_H;
+                        C_direction[i][j] = LEFT_H;
                         break;
                     case 1:                                  // score in (i,j) stems from a deletion in sequence V
-                        I_direction[i][j] = LEFT_B;
+                        C_direction[i][j] = LEFT_B;
                         break;
                     case 2:                                  // score in (i,j) stems from a deletion in sequence W
-                        I_direction[i][j] = LEFT_C;
+                        C_direction[i][j] = LEFT_C;
                         break;
                 }
             }

@@ -96,6 +96,70 @@ int initDirectionsMatrix() {
     return 1;
 }
 
+int initDirectionsMatrixB() {
+    int size_w = seq_w_size + 1;
+    int size_v = seq_v_size + 1;
+
+    B_direction = (int **) malloc(size_w * sizeof(int *));
+    if(B_direction == NULL){
+        printf("could not allocate memory\n");
+        return -1;
+    }
+    for(int i = 0; i < size_w; i++){
+        B_direction[i] = (int *) malloc(size_v * sizeof(int));
+        if(B_direction[i] == NULL){
+            printf("could not allocate memory\n");
+            return -1;
+        }
+    }
+
+    for(int i = 0; i < size_w; i++){
+        for(int j = 0; j < size_v; j++){
+            if(j == 0){
+                B_direction[i][j] = TOP;
+            } else if(i == 0){
+                B_direction[i][j] = LEFT;
+            } else {
+                B_direction[i][j] = NONE;
+            }
+        }
+    }
+    B_direction[0][0] = NONE;
+    return 1;
+}
+
+int initDirectionsMatrixC() {
+    int size_w = seq_w_size + 1;
+    int size_v = seq_v_size + 1;
+
+    C_direction = (int **) malloc(size_w * sizeof(int *));
+    if(C_direction == NULL){
+        printf("could not allocate memory\n");
+        return -1;
+    }
+    for(int i = 0; i < size_w; i++){
+        C_direction[i] = (int *) malloc(size_v * sizeof(int));
+        if(C_direction[i] == NULL){
+            printf("could not allocate memory\n");
+            return -1;
+        }
+    }
+
+    for(int i = 0; i < size_w; i++){
+        for(int j = 0; j < size_v; j++){
+            if(j == 0){
+                C_direction[i][j] = TOP;
+            } else if(i == 0){
+                C_direction[i][j] = LEFT;
+            } else {
+                C_direction[i][j] = NONE;
+            }
+        }
+    }
+    C_direction[0][0] = NONE;
+    return 1;
+}
+
 void printMatrix(int **matrix){
     int size_w = seq_w_size + 1;
     int size_v = seq_v_size + 1;
@@ -246,7 +310,12 @@ int initMatricesForBlocks(enum GAP_TYPE v_type, enum GAP_TYPE w_type){
         }
     }
 
-    return initDirectionsMatrix();
+    if (!initDirectionsMatrix())
+      return 0;
+    if (!initDirectionsMatrixB())
+      return 0;
+
+    return initDirectionsMatrixC();
 }
 
 bool shouldFill(int i, int j){
@@ -708,14 +777,14 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
         }
     }
 
-    printf("GOT MAX\n");
-
     int **currentMatrix;
     int i, aux_i;
     int j, aux_j;
 
     int maxPerTable[3] = {H[max_i_H][max_j_H], B[max_i_B][max_j_B], C[max_i_C][max_j_C]};
+
     array_max_t arraymax = find_array_max(maxPerTable, 3);
+
     switch (arraymax.ind) {
         case 0:
             currentMatrix = H;
@@ -733,24 +802,35 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
             j = aux_j = max_j_C;
             break;
     }
+
+    printMatrix(I_direction);
+    printMatrix(B_direction);
+    printMatrix(C_direction);
     
     int count = 0;
     while(aux_i >= 0 && aux_j >= 0){
         switch(I_direction[aux_i][aux_j]){
+            case TOP_LEFT:
             case TOP_LEFT_H:
             case TOP_LEFT_B:
             case TOP_LEFT_C:
                 aux_i--;
                 aux_j--;
                 break;
+            case TOP:
             case TOP_H:
             case TOP_B:
             case TOP_C:
                 aux_i--;
                 break;
+            case LEFT:
             case LEFT_H:
             case LEFT_B:
             case LEFT_C:
+                aux_j--;
+                break;
+            case NONE:
+                aux_i--;
                 aux_j--;
                 break;
         }
@@ -769,7 +849,6 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     string_alignment.w_string = (char *) malloc((count+1) * sizeof(char));
 
     int str_index = count-1;
-
     temp = 0;
     while(seq_w_size - temp >= i+1){
       string_alignment.v_string[str_index] = '-';
@@ -786,7 +865,7 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
       str_index--;
     }
 
-    // printMatrixToFile("temp_matrix_H.dat", H);
+    printf("Filled gaps\n");
 
     string_alignment.best_score = arraymax.max;
 
