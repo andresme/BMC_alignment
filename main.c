@@ -2,7 +2,7 @@
 #include "alignments.h"
 #include "encodeUtils.h"
 #include "file.h"
-#include <gtk/gtk.h> 
+#include <gtk/gtk.h>
 
 GtkWidget *entrada, *nw, *sw;
 GtkEntry *h1, *h2, *cantThreads, *match, *miss, *gap, *valueK, *ampB, *valueg, *valueh, *sw_valueg, *sw_valueh;
@@ -11,7 +11,6 @@ GtkCheckButton *nw_k_band, *nw_blocks, *sw_blocks;
 GtkComboBoxText *comboBox, *nw_type, *sw_type;
 GtkBuilder *builder;
 
-int threads_value;
 int k_init_value;
 int k_amp_value;
 char *string_v, *string_w;
@@ -91,9 +90,9 @@ void on_continueSW_clicked(GtkButton *button, gpointer data){
     if(gtk_toggle_button_get_active(sw_blocks)){
         score_table.new_block_cost = atoi(gtk_entry_get_text(sw_valueg));
         score_table.continue_block_cost = atoi(gtk_entry_get_text(sw_valueh));
-        runSmithWaterman(string_v, string_w, gap_blocks, threads_value);
+        runSmithWaterman(string_v, string_w, gap_blocks, threads);
     } else {
-        runSmithWaterman(string_v, string_w, none, threads_value);
+        runSmithWaterman(string_v, string_w, none, threads);
     }
 }
 
@@ -101,8 +100,6 @@ void on_continueSW_clicked(GtkButton *button, gpointer data){
 void on_continueNW_clicked(GtkButton *button, gpointer data){
     int type_v = getType(v_left, v_right);
     int type_w = getType(w_left, w_right);
-
-
 
     char* selected = gtk_combo_box_text_get_active_text(nw_type);
     if(selected[0] == '2'){
@@ -124,13 +121,13 @@ void on_continueNW_clicked(GtkButton *button, gpointer data){
     if(gtk_toggle_button_get_active(nw_k_band)){
         k_init_value = atoi(gtk_entry_get_text (valueK));
         k_amp_value = atoi(gtk_entry_get_text (ampB));
-        runNeedlemanWunsch(type_v, type_w, string_v, string_w, k_band, threads_value, k_init_value, k_amp_value);
+        runNeedlemanWunsch(type_v, type_w, string_v, string_w, k_band, threads, k_init_value, k_amp_value);
     } else if(gtk_toggle_button_get_active(nw_blocks)){
         score_table.new_block_cost = atoi(gtk_entry_get_text(valueg));
         score_table.continue_block_cost = atoi(gtk_entry_get_text(valueh));
-        runNeedlemanWunsch(type_v, type_w, string_v, string_w, gap_blocks, threads_value, 0, 0);
+        runNeedlemanWunsch(type_v, type_w, string_v, string_w, gap_blocks, threads, 0, 0);
     } else {
-        runNeedlemanWunsch(type_v, type_w, string_v, string_w, none, threads_value, 0, 0);
+        runNeedlemanWunsch(type_v, type_w, string_v, string_w, none, threads, 0, 0);
     }
 
 }
@@ -138,18 +135,18 @@ void on_continueNW_clicked(GtkButton *button, gpointer data){
 void on_accept_clicked(GtkButton *button, gpointer data){
     char* selected = gtk_combo_box_text_get_active_text(comboBox);
     printf("selected: %s", selected);
-    threads_value = atoi(gtk_entry_get_text (cantThreads));
+    threads = atoi(gtk_entry_get_text (cantThreads));
     string_v = gtk_entry_get_text (h1);
     string_w = gtk_entry_get_text (h2);
     int error = 0;
     printf("%d\n", threads);
-    if(threads < 0 || threads > 100){
+    if(threads < 1 || threads > 100){
         GtkWidget *dialog;
         dialog = gtk_message_dialog_new(GTK_WINDOW(entrada),
                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_MESSAGE_ERROR,
                                         GTK_BUTTONS_OK,
-                                        "Error loading file");
+                                        "Threads must be > 1 and < 100");
         gtk_window_set_title(GTK_WINDOW(dialog), "Error");
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
@@ -171,14 +168,36 @@ void on_accept_clicked(GtkButton *button, gpointer data){
     }
     score_table.gap = atoi(gtk_entry_get_text(gap));
 
-    if(gtk_entry_get_text_length(match) > 0){
-        score_table.match = atoi(gtk_entry_get_text(match));
+    if(score_table.type == 0){
+      if(gtk_entry_get_text_length(match) > 0){
+          score_table.match = atoi(gtk_entry_get_text(match));
+      } else {
+        GtkWidget *dialog;
+        dialog = gtk_message_dialog_new(GTK_WINDOW(entrada),
+                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_ERROR,
+                                        GTK_BUTTONS_OK,
+                                        "Must set match or load a table");
+        gtk_window_set_title(GTK_WINDOW(dialog), "Error");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        error = 1;
+      }
+      if(gtk_entry_get_text_length(miss) > 0){
+          score_table.missmatch = atoi(gtk_entry_get_text(miss));
+      } else {
+        GtkWidget *dialog;
+        dialog = gtk_message_dialog_new(GTK_WINDOW(entrada),
+                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_ERROR,
+                                        GTK_BUTTONS_OK,
+                                        "Must set missmatch or load a table");
+        gtk_window_set_title(GTK_WINDOW(dialog), "Error");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        error = 1;
+      }
     }
-    if(gtk_entry_get_text_length(miss) > 0){
-        score_table.missmatch = atoi(gtk_entry_get_text(miss));
-    }
-
-
 
     if(error == 0){
         if(selected[0] == 'N'){
@@ -294,11 +313,5 @@ int main(int argc, const char *argv[]) {
     gtk_widget_show(entrada);
     gtk_main();
 
-
-
-
     return 0;
 }
-
-
-
