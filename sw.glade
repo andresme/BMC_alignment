@@ -64,7 +64,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="valueg">
+                  <object class="GtkEntry" id="sw_valueg">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                   </object>
@@ -99,7 +99,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="valueh">
+                  <object class="GtkEntry" id="sw_valueh">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                   </object>
@@ -141,14 +141,18 @@
               </packing>
             </child>
             <child>
-              <object class="GtkComboBoxText" id="alignmegnt">
+              <object class="GtkComboBoxText" id="sw_type">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="active">0</property>
                 <items>
-                  <item id="pvp" translatable="yes">Proteina(1 o 3 letras) vs Proteina(1 o 3 letras)</item>
-                  <item id="dnavp" translatable="yes">DNA vs Proteina(1 o 3 letras)</item>
-                  <item id="dna" translatable="yes">DNA vs DNA</item>
-                  <item translatable="yes">Texto vs Texto</item>
+                  <item id="pvp" translatable="yes">1) Proteina (1 letra) vs Proteina (1 letra)</item>
+                  <item id="dnavp" translatable="yes">2) Proteina (3 letras) vs Proteina (3 letras)</item>
+                  <item id="dna" translatable="yes">3) DNA vs Proteina (1 letra)</item>
+                  <item translatable="yes">4) DNA vs Proteina (3 letras)</item>
+                  <item translatable="yes">5) DNA vs DNA</item>
+                  <item translatable="yes">6) Texto vs Texto</item>
+                  <item translatable="yes">7) Proteina (1 letra) vs Proteina (3 letras)</item>
                 </items>
               </object>
               <packing>

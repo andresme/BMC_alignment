@@ -5,10 +5,10 @@
 #include <gtk/gtk.h> 
 
 GtkWidget *entrada, *nw, *sw;
-GtkEntry *h1, *h2, *cantThreads, *match, *miss, *gap, *valueK, *ampB, *valueg, *valueh;
+GtkEntry *h1, *h2, *cantThreads, *match, *miss, *gap, *valueK, *ampB, *valueg, *valueh, *sw_valueg, *sw_valueh;
 GtkCheckButton *v_left, *v_right, *w_left, *w_right;
 GtkCheckButton *nw_k_band, *nw_blocks, *sw_blocks;
-GtkComboBoxText *comboBox, *nw_type;
+GtkComboBoxText *comboBox, *nw_type, *sw_type;
 GtkBuilder *builder;
 
 int threads_value;
@@ -46,6 +46,12 @@ void getGtkWidgets(GtkBuilder *builder) {
     valueg = (GtkEntry *) GTK_WIDGET(gtk_builder_get_object(builder, "valueg"));
     valueh = (GtkEntry *) GTK_WIDGET(gtk_builder_get_object(builder, "valueh"));
 
+    sw =  GTK_WIDGET(gtk_builder_get_object(builder, "sw"));
+    sw_blocks = (GtkCheckButton *)  GTK_WIDGET(gtk_builder_get_object(builder, "sw_blocks"));
+    sw_valueg = (GtkEntry *) GTK_WIDGET(gtk_builder_get_object(builder, "sw_valueg"));
+    sw_valueh = (GtkEntry *) GTK_WIDGET(gtk_builder_get_object(builder, "sw_valueh"));
+    sw_type = (GtkComboBoxText *) GTK_WIDGET(gtk_builder_get_object(builder, "sw_type"));
+
     setInitialValues();
 }
 
@@ -65,8 +71,26 @@ int getType(GtkCheckButton *left, GtkCheckButton *right){
 
 
 void on_continueSW_clicked(GtkButton *button, gpointer data){
-    
+    char* selected = gtk_combo_box_text_get_active_text(sw_type);
+    if(selected[0] == '2'){
+        char *temp = encodeOneLetter(string_v);
+        string_v = temp;
+        char *temp2 = encodeOneLetter(string_w);
+        string_w = temp2;
+    } else if(selected[0] == '3'){
+        char *temp = encodeDnaToProtein(string_v);
+        string_v = temp;
+    } else if(selected[0] == '4'){
+        char *temp = encodeDnaToProtein(string_v);
+        string_v = temp;
+    }  else if(selected[0] == '7'){
+        char *temp2 = encodeOneLetter(string_w);
+        string_w = temp2;
+    }
+
     if(gtk_toggle_button_get_active(sw_blocks)){
+        score_table.new_block_cost = atoi(gtk_entry_get_text(sw_valueg));
+        score_table.continue_block_cost = atoi(gtk_entry_get_text(sw_valueh));
         runSmithWaterman(string_v, string_w, gap_blocks, threads_value);
     } else {
         runSmithWaterman(string_v, string_w, none, threads_value);
@@ -77,6 +101,9 @@ void on_continueSW_clicked(GtkButton *button, gpointer data){
 void on_continueNW_clicked(GtkButton *button, gpointer data){
     int type_v = getType(v_left, v_right);
     int type_w = getType(w_left, w_right);
+
+
+
     char* selected = gtk_combo_box_text_get_active_text(nw_type);
     if(selected[0] == '2'){
         char *temp = encodeOneLetter(string_v);
@@ -99,6 +126,8 @@ void on_continueNW_clicked(GtkButton *button, gpointer data){
         k_amp_value = atoi(gtk_entry_get_text (ampB));
         runNeedlemanWunsch(type_v, type_w, string_v, string_w, k_band, threads_value, k_init_value, k_amp_value);
     } else if(gtk_toggle_button_get_active(nw_blocks)){
+        score_table.new_block_cost = atoi(gtk_entry_get_text(valueg));
+        score_table.continue_block_cost = atoi(gtk_entry_get_text(valueh));
         runNeedlemanWunsch(type_v, type_w, string_v, string_w, gap_blocks, threads_value, 0, 0);
     } else {
         runNeedlemanWunsch(type_v, type_w, string_v, string_w, none, threads_value, 0, 0);
@@ -155,7 +184,7 @@ void on_accept_clicked(GtkButton *button, gpointer data){
         if(selected[0] == 'N'){
             gtk_widget_show(nw);
         } else if(selected[0] == 'S') {
-
+            gtk_widget_show(sw);
         }
     }
 }
@@ -222,6 +251,10 @@ void on_loadTable_clicked(GtkButton *button, gpointer data){
 }
 
 
+void hide_on_close(GtkWidget *widget, GdkEventAny *event){
+    gtk_widget_hide (widget);
+}
+
 
 int main(int argc, const char *argv[]) {
 
@@ -250,6 +283,13 @@ int main(int argc, const char *argv[]) {
     gtk_builder_connect_signals(builder, NULL);
     g_signal_connect(G_OBJECT(entrada), "destroy",
                      G_CALLBACK(gtk_main_quit), NULL);
+
+    g_signal_connect(G_OBJECT(sw), "delete_event",
+                    G_CALLBACK(hide_on_close), NULL);
+
+    g_signal_connect(G_OBJECT(nw), "delete_event",
+            G_CALLBACK(hide_on_close), NULL);
+
     g_object_unref(G_OBJECT(builder));
     gtk_widget_show(entrada);
     gtk_main();
