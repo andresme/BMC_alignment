@@ -79,6 +79,7 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
         }
         freeMatrix(I_direction, seq_w_size);
         freeStrings();
+        writeAlignmentToFile();
         freeResults();
     }
     writeTimesToFile(times, threads, "temp_times.dat");
@@ -91,7 +92,7 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
         }
     }
     plotWithGnuPath();
-
+    plotAlignment();
     if (mode == k_band){
         plotTimesKBand();
     } else {

@@ -35,6 +35,8 @@ void freeMatrix(int **matrix, int size_i);
 
 void freeThreadData(thread_data_t *data);
 
+void writeAlignmentToFile();
+
 void writeTimesToFile(float times[], int threads, char *fileName);
 
 void plotWithGnu();
@@ -54,5 +56,7 @@ void plotWithGnuPathB();
 void plotWithGnuC();
 
 void plotWithGnuPathC();
+
+void plotAlignment();
 
 #endif //ALIGNMENT_UTILS_H
