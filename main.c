@@ -2,6 +2,7 @@
 #include "alignments.h"
 #include "encodeUtils.h"
 #include "file.h"
+#include <locale.h>
 #include <gtk/gtk.h>
 
 GtkWidget *entrada, *nw, *sw;
@@ -308,6 +309,7 @@ int main(int argc, const char *argv[]) {
 
     g_signal_connect(G_OBJECT(nw), "delete_event",
             G_CALLBACK(hide_on_close), NULL);
+	setlocale (LC_ALL,"C");
 
     g_object_unref(G_OBJECT(builder));
     gtk_widget_show(entrada);
