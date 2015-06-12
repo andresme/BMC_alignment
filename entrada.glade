@@ -58,6 +58,7 @@ Threads: </property>
                       <object class="GtkEntry" id="threads">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="input_purpose">number</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -90,10 +91,9 @@ Threads: </property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="h1">
+                      <object class="GtkEntry" id="h2">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="max_length">1</property>
                         <property name="max_width_chars">0</property>
                       </object>
                       <packing>
@@ -127,7 +127,7 @@ Threads: </property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="h2">
+                      <object class="GtkEntry" id="h1">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                       </object>
@@ -201,6 +201,7 @@ por medio de un archivo</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="yalign">0.49000000953674316</property>
+                                <signal name="clicked" handler="on_loadH1_clicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -228,6 +229,7 @@ por medio de un archivo</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <signal name="clicked" handler="on_loadH2_clicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -288,9 +290,10 @@ Alineamiento: </property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkComboBoxText" id="alignmegnt">
+                      <object class="GtkComboBoxText" id="alignment">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="active">1</property>
                         <items>
                           <item id="nw" translatable="yes">Needleman-Wunsch</item>
                           <item id="sw" translatable="yes">Smith-Waterman</item>
@@ -470,6 +473,7 @@ Alineamiento: </property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="yalign">0.49000000953674316</property>
+                            <signal name="clicked" handler="on_loadTable_clicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -539,6 +543,7 @@ Alineamiento: </property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_accept_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

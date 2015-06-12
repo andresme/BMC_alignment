@@ -32,7 +32,7 @@
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkCheckButton" id="bloquesSW">
+              <object class="GtkCheckButton" id="sw_blocks">
                 <property name="label" translatable="yes">Bloques de Gaps</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -187,6 +187,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_continueSW_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

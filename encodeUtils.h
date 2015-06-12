@@ -4,6 +4,7 @@
 #include "globals.h"
 
 char *encodeDnaToProtein(char *dna);
+
 char *encodeOneLetter(char *protein);
 
 

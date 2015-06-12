@@ -67,15 +67,42 @@
                 <property name="can_focus">False</property>
                 <property name="spacing">50</property>
                 <child>
-                  <object class="GtkCheckButton" id="left">
-                    <property name="label" translatable="yes">Gaps Gratis
-Izquierda</property>
+                  <object class="GtkBox" id="box14">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="action_name">left</property>
-                    <property name="xalign">0</property>
-                    <property name="draw_indicator">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkCheckButton" id="v_right">
+                        <property name="label" translatable="yes">Gaps Gratis
+Derecha</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="xalign">0</property>
+                        <property name="draw_indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="v_left">
+                        <property name="label" translatable="yes">Gaps Gratis
+Izquierda</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="xalign">0</property>
+                        <property name="draw_indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -84,15 +111,42 @@ Izquierda</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="rigth">
-                    <property name="label" translatable="yes">Gaps Gratis
-Derecha</property>
+                  <object class="GtkBox" id="box15">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="action_name">rigth</property>
-                    <property name="xalign">0</property>
-                    <property name="draw_indicator">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkCheckButton" id="w_right">
+                        <property name="label" translatable="yes">Gaps Gratis
+Derecha</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="xalign">0</property>
+                        <property name="draw_indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="w_left">
+                        <property name="label" translatable="yes">Gaps Gratis
+Izquierda</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="xalign">0</property>
+                        <property name="draw_indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -125,9 +179,8 @@ Derecha</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkRadioButton" id="kband">
-                    <property name="label" translatable="yes">K-Bands</property>
-                    <property name="use_action_appearance">True</property>
+                  <object class="GtkCheckButton" id="nw_k_band">
+                    <property name="label" translatable="yes">K Band</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -225,13 +278,12 @@ de la banda:</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkRadioButton" id="bloques">
-                    <property name="label" translatable="yes">Bloques de Gaps</property>
+                  <object class="GtkCheckButton" id="checkbutton1">
+                    <property name="label" translatable="yes">Bloques de gaps</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="xalign">0</property>
-                    <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
@@ -342,14 +394,18 @@ de la banda:</property>
               </packing>
             </child>
             <child>
-              <object class="GtkComboBoxText" id="alignmegnt">
+              <object class="GtkComboBoxText" id="nw_type">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="active">0</property>
                 <items>
-                  <item id="pvp" translatable="yes">Proteina(1 o 3 letras) vs Proteina(1 o 3 letras)</item>
-                  <item id="dnavp" translatable="yes">DNA vs Proteina(1 o 3 letras)</item>
-                  <item id="dna" translatable="yes">DNA vs DNA</item>
-                  <item translatable="yes">Texto vs Texto</item>
+                  <item id="pvp" translatable="yes">1) Proteina (1 letra) vs Proteina (1 letra)</item>
+                  <item translatable="yes">2) Proteina (3 letras) vs Proteina (3 letras)</item>
+                  <item id="dnavp" translatable="yes">3) DNA vs Proteina (1 letra)</item>
+                  <item translatable="yes">4) DNA vs Proteina (3 letras)</item>
+                  <item id="dna" translatable="yes">5) DNA vs DNA</item>
+                  <item translatable="yes">6) Texto vs Texto</item>
+                  <item translatable="yes">7) Proteina (1 letra) vs Proteina (3 letras)</item>
                 </items>
               </object>
               <packing>
@@ -388,6 +444,7 @@ de la banda:</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_continueNW_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

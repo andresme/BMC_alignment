@@ -26,8 +26,8 @@ struct table_score {
 } typedef table_score;
 
 typedef struct alignment {
-    char* v_string;
-    char* w_string;
+    char *v_string;
+    char *w_string;
     int best_score;
 } ALIGNMENT;
 
