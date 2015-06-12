@@ -821,6 +821,7 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
         }
     }
 
+    int **auxMatrix;
     int **currentMatrix;
     int i, aux_i;
     int j, aux_j;
@@ -831,17 +832,17 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
 
     switch (arraymax.ind) {
         case 0:
-            currentMatrix = H;
+            currentMatrix = auxMatrix = H;
             i = aux_i = max_i_H;
             j = aux_j = max_j_H;
             break;
         case 1:
-            currentMatrix = B;
+            currentMatrix = auxMatrix = B;
             i = aux_i = max_i_B;
             j = aux_j = max_j_B;
             break;
         case 2:
-            currentMatrix = C;
+            currentMatrix = auxMatrix = C;
             i = aux_i = max_i_C;
             j = aux_j = max_j_C;
             break;
@@ -853,24 +854,54 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
 
     int count = 0;
     while (aux_i >= 0 && aux_j >= 0) {
-        switch (I_direction[aux_i][aux_j]) {
+        switch (auxMatrix[aux_i][aux_j]) {
             case TOP_LEFT:
+                aux_i--;
+                aux_j--;
+                break;
             case TOP_LEFT_H:
+                auxMatrix = H;
+                aux_i--;
+                aux_j--;
+                break;
             case TOP_LEFT_B:
+                auxMatrix = B;
+                aux_i--;
+                aux_j--;
+                break;
             case TOP_LEFT_C:
+                auxMatrix = C;
                 aux_i--;
                 aux_j--;
                 break;
             case TOP:
+                aux_i--;
+                break;
             case TOP_H:
+                auxMatrix = H;
+                aux_i--;
+                break;
             case TOP_B:
+                auxMatrix = B;
+                aux_i--;
+                break;
             case TOP_C:
+                auxMatrix = C;
                 aux_i--;
                 break;
             case LEFT:
+                aux_j--;
+                break;
             case LEFT_H:
+                auxMatrix = H;
+                aux_j--;
+                break;
             case LEFT_B:
+                auxMatrix = B;
+                aux_j--;
+                break;
             case LEFT_C:
+                auxMatrix = C;
                 aux_j--;
                 break;
             case NONE:
@@ -920,24 +951,73 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     }
 
     while (i >= 0 && j >= 0) {
-        switch (I_direction[aux_i][aux_j]) {
+        switch (currentMatrix[aux_i][aux_j]) {
+            case TOP:
+                string_alignment.v_string[str_index] = seq_v[j - 1] = seq_v[j - 1];
+                string_alignment.w_string[str_index] = seq_w[i - 1];
+                i--;
+                j--;
             case TOP_LEFT_H:
-            case TOP_LEFT_B:
-            case TOP_LEFT_C:
+                currentMatrix = H;
                 string_alignment.v_string[str_index] = seq_v[j - 1] = seq_v[j - 1];
                 string_alignment.w_string[str_index] = seq_w[i - 1];
                 i--;
                 j--;
                 break;
-            case TOP_H:
-            case TOP_B:
-            case TOP_C:
+            case TOP_LEFT_B:
+                currentMatrix = B;
+                string_alignment.v_string[str_index] = seq_v[j - 1] = seq_v[j - 1];
+                string_alignment.w_string[str_index] = seq_w[i - 1];
+                i--;
+                j--;
+                break;
+            case TOP_LEFT_C:
+                currentMatrix = B;
+                string_alignment.v_string[str_index] = seq_v[j - 1] = seq_v[j - 1];
+                string_alignment.w_string[str_index] = seq_w[i - 1];
+                i--;
+                j--;
+                break;
+            case TOP:
                 string_alignment.v_string[str_index] = '-';
                 string_alignment.w_string[str_index] = seq_w[i - 1];
                 i--;
                 break;
+            case TOP_H:
+                currentMatrix = H;
+                string_alignment.v_string[str_index] = '-';
+                string_alignment.w_string[str_index] = seq_w[i - 1];
+                i--;
+                break;
+            case TOP_B:
+                currentMatrix = B;
+                string_alignment.v_string[str_index] = '-';
+                string_alignment.w_string[str_index] = seq_w[i - 1];
+                i--;
+                break;
+            case TOP_C:
+                currentMatrix = C;
+                string_alignment.v_string[str_index] = '-';
+                string_alignment.w_string[str_index] = seq_w[i - 1];
+                i--;
+                break;
+            case LEFT:
+                string_alignment.v_string[str_index] = seq_v[j - 1];
+                string_alignment.w_string[str_index] = '-';
+                j--;
+                break;
             case LEFT_H:
+                currentMatrix = H;
+                string_alignment.v_string[str_index] = seq_v[j - 1];
+                string_alignment.w_string[str_index] = '-';
+                j--;
+                break;
             case LEFT_B:
+                currentMatrix = B;
+                string_alignment.v_string[str_index] = seq_v[j - 1];
+                string_alignment.w_string[str_index] = '-';
+                j--;
+                break;
             case LEFT_C:
                 string_alignment.v_string[str_index] = seq_v[j - 1];
                 string_alignment.w_string[str_index] = '-';
