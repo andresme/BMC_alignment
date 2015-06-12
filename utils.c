@@ -520,6 +520,15 @@ void plotTimes() {
     }
 }
 
+void plotAlignment() {
+    int status;
+    if (fork() == 0) {
+        status = system("./gnuplot_alignment.gp");
+        exit(0);
+    }
+}
+
+
 
 void printMatrixToFile(char *fileName, int **matrix) {
     FILE *file = fopen(fileName, "w");
@@ -568,6 +577,19 @@ void writeTimesToFile(float times[], int threads, char *fileName) {
     }
     fclose(file);
 
+}
+
+void writeAlignmentToFile(){
+  int i = 0;
+  FILE *fileV = fopen("string_v.dat", "w");
+  FILE *fileW = fopen("string_w.dat", "w");
+  while(string_alignment.v_string[i] != '\0'){
+    fprintf(fileV, "%c\t%d\t%d\n", string_alignment.v_string[i], i, 1);
+    fprintf(fileW, "%c\t%d\t%d\n", string_alignment.w_string[i], i, 0);
+    i++;
+  }
+  fclose(fileV);
+  fclose(fileW);
 }
 
 void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
