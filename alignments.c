@@ -131,10 +131,10 @@ void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, 
         pthread_cond_destroy(&condWait);
 
         if (mode == gap_blocks) {
+          printMatrixToFile("temp_matrix.dat", H);
+          printMatrixToFile("temp_matrix_B.dat", B);
+          printMatrixToFile("temp_matrix_C.dat", C);
             getAlignmentBlock(free_left_free_right, free_left_free_right);
-            printMatrixToFile("temp_matrix.dat", H);
-            printMatrixToFile("temp_matrix_B.dat", B);
-            printMatrixToFile("temp_matrix_C.dat", C);
         } else {
             getAlignment(free_left_free_right, free_left_free_right);
             printMatrixToFile("temp_matrix.dat", H);
@@ -146,6 +146,8 @@ void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, 
             freeMatrix(C, seq_w_size);
         }
         freeMatrix(I_direction, seq_w_size);
+        freeMatrix(B_direction, seq_w_size);
+        freeMatrix(C_direction, seq_w_size);
         freeStrings();
         freeResults();
     }
