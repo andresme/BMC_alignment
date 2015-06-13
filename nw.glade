@@ -278,7 +278,7 @@ de la banda:</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkCheckButton" id="checkbutton1">
+                  <object class="GtkCheckButton" id="nw_blocks">
                     <property name="label" translatable="yes">Bloques de gaps</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>

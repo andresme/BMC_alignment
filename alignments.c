@@ -97,6 +97,7 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
     }
     plotWithGnuPath();
     if(mode == gap_blocks){
+      printf("herepaths\n");
       plotWithGnuPathB();
       plotWithGnuPathC();
     }

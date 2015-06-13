@@ -124,6 +124,7 @@ void on_continueNW_clicked(GtkButton *button, gpointer data){
         k_amp_value = atoi(gtk_entry_get_text (ampB));
         runNeedlemanWunsch(type_v, type_w, string_v, string_w, k_band, threads, k_init_value, k_amp_value);
     } else if(gtk_toggle_button_get_active(nw_blocks)){
+      printf("here nw\n");
         score_table.new_block_cost = atoi(gtk_entry_get_text(valueg));
         score_table.continue_block_cost = atoi(gtk_entry_get_text(valueh));
         runNeedlemanWunsch(type_v, type_w, string_v, string_w, gap_blocks, threads, 0, 0);
