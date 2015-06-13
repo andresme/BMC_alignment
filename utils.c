@@ -602,6 +602,7 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
 
     bool v_type_value = v_type == free_left_free_right || v_type == penalty_left_free_right;
     bool w_type_value = w_type == free_left_free_right || w_type == penalty_left_free_right;
+
     int temp = H[seq_w_size][seq_v_size];
     if (v_type_value && w_type_value) {
         for (int i = seq_w_size; i > 0; i--) {
@@ -696,7 +697,7 @@ void getAlignment(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     }
 
 
-    printMatrixToFile("temp_matrix.dat", H);
+
     string_alignment.best_score = H[seq_w_size][seq_v_size];
 
     FILE *path = fopen("temp_lines.dat", "w");
@@ -974,7 +975,7 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
 
     while (i >= 0 && j >= 0) {
         switch (currentMatrix[aux_i][aux_j]) {
-            case TOP:
+            case TOP_LEFT:
                 string_alignment.v_string[str_index] = seq_v[j - 1] = seq_v[j - 1];
                 string_alignment.w_string[str_index] = seq_w[i - 1];
                 i--;

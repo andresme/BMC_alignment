@@ -67,9 +67,13 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
         pthread_cond_destroy(&condWait);
 
         if (mode == gap_blocks) {
-            getAlignmentBlock(v_type, w_type);
+            getAlignmentBlock(free_left_free_right, free_left_free_right);
+            printMatrixToFile("temp_matrix.dat", H);
+            printMatrixToFile("temp_matrix_B.dat", B);
+            printMatrixToFile("temp_matrix_C.dat", C);
         } else {
-            getAlignment(v_type, w_type);
+            getAlignment(free_left_free_right, free_left_free_right);
+            printMatrixToFile("temp_matrix.dat", H);
         }
 
         freeMatrix(H, seq_w_size);
@@ -92,6 +96,10 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
         }
     }
     plotWithGnuPath();
+    if(mode == gap_blocks){
+      plotWithGnuPathB();
+      plotWithGnuPathC();
+    }
     plotAlignment();
     if (mode == k_band){
         plotTimesKBand();
@@ -120,7 +128,16 @@ void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, 
         pthread_mutex_destroy(&mutexWait);
         pthread_cond_destroy(&condWait);
 
-        getAlignment(free_left_free_right, free_left_free_right);
+        if (mode == gap_blocks) {
+            getAlignmentBlock(free_left_free_right, free_left_free_right);
+            printMatrixToFile("temp_matrix.dat", H);
+            printMatrixToFile("temp_matrix_B.dat", B);
+            printMatrixToFile("temp_matrix_C.dat", C);
+        } else {
+            getAlignment(free_left_free_right, free_left_free_right);
+            printMatrixToFile("temp_matrix.dat", H);
+        }
+
         freeMatrix(H, seq_w_size);
         if (mode == gap_blocks) {
             freeMatrix(B, seq_w_size);
@@ -135,6 +152,10 @@ void runSmithWaterman(char *v_string, char *w_string, enum ALIGNMENT_MODE mode, 
     }
 
     plotWithGnu();
+    if(mode == gap_blocks){
+      plotWithGnuB();
+      plotWithGnuC();
+    }
     writeTimesToFile(times, threads, "temp_times.dat");
     plotTimes();
 
