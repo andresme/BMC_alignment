@@ -584,8 +584,8 @@ void writeAlignmentToFile(){
   FILE *fileV = fopen("string_v.dat", "w");
   FILE *fileW = fopen("string_w.dat", "w");
   while(string_alignment.v_string[i] != '\0'){
-    fprintf(fileV, "%c\t%d\t%f\n", string_alignment.v_string[i], i, 1);
-    fprintf(fileW, "%c\t%d\t%f\n", string_alignment.w_string[i], i, 0.05);
+    fprintf(fileV, "%c\t%d\t%d\n", string_alignment.v_string[i], i, 1);
+    fprintf(fileW, "%c\t%d\t%d\n", string_alignment.w_string[i], i, 0);
     i++;
   }
   fclose(fileV);
