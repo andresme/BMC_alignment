@@ -498,7 +498,7 @@ void plotWithGnuC() {
 void plotWithGnuPathC() {
     int status;
     if (fork() == 0) {
-        status = system("./gnuplot_path_C.gp");
+        status = system("./gnuplot_pathC.gp");
         exit(0);
     }
 }
