@@ -67,10 +67,10 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
         pthread_cond_destroy(&condWait);
 
         if (mode == gap_blocks) {
+          printMatrixToFile("temp_matrix.dat", H);
+          printMatrixToFile("temp_matrix_B.dat", B);
+          printMatrixToFile("temp_matrix_C.dat", C);
             getAlignmentBlock(free_left_free_right, free_left_free_right);
-            printMatrixToFile("temp_matrix.dat", H);
-            printMatrixToFile("temp_matrix_B.dat", B);
-            printMatrixToFile("temp_matrix_C.dat", C);
         } else {
             getAlignment(free_left_free_right, free_left_free_right);
             printMatrixToFile("temp_matrix.dat", H);
@@ -87,8 +87,9 @@ void runNeedlemanWunsch(enum GAP_TYPE v_type, enum GAP_TYPE w_type, char *v_stri
         freeResults();
     }
     writeTimesToFile(times, threads, "temp_times.dat");
-    writeTimesToFile(times_k_band, threads, "temp_times_k_band.dat");
-
+    if (mode == k_band) {
+        writeTimesToFile(times_k_band, threads, "temp_times_k_band.dat");
+    }
     for (int i = 0; i < threads; i++) {
         printf("%d threads took: %f\n", i, times[i]);
         if (mode == k_band) {
