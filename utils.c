@@ -855,17 +855,17 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
 
     switch (arraymax.ind) {
         case 0:
-            currentMatrix = auxMatrix = H;
+            currentMatrix = auxMatrix = I_direction;
             i = aux_i = max_i_H;
             j = aux_j = max_j_H;
             break;
         case 1:
-            currentMatrix = auxMatrix = B;
+            currentMatrix = auxMatrix = B_direction;
             i = aux_i = max_i_B;
             j = aux_j = max_j_B;
             break;
         case 2:
-            currentMatrix = auxMatrix = C;
+            currentMatrix = auxMatrix = C_direction;
             i = aux_i = max_i_C;
             j = aux_j = max_j_C;
             break;
@@ -875,6 +875,7 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     printMatrix(B_direction);
     printMatrix(C_direction);
 
+    printf("Start count\n");
     int count = 0;
     while (aux_i >= 0 && aux_j >= 0) {
         switch (auxMatrix[aux_i][aux_j]) {
@@ -883,17 +884,17 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
                 aux_j--;
                 break;
             case TOP_LEFT_H:
-                auxMatrix = H;
+                auxMatrix = I_direction;
                 aux_i--;
                 aux_j--;
                 break;
             case TOP_LEFT_B:
-                auxMatrix = B;
+                auxMatrix = B_direction;
                 aux_i--;
                 aux_j--;
                 break;
             case TOP_LEFT_C:
-                auxMatrix = C;
+                auxMatrix = C_direction;
                 aux_i--;
                 aux_j--;
                 break;
@@ -901,30 +902,30 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
                 aux_i--;
                 break;
             case TOP_H:
-                auxMatrix = H;
+                auxMatrix = I_direction;
                 aux_i--;
                 break;
             case TOP_B:
-                auxMatrix = B;
+                auxMatrix = B_direction;
                 aux_i--;
                 break;
             case TOP_C:
-                auxMatrix = C;
+                auxMatrix = C_direction;
                 aux_i--;
                 break;
             case LEFT:
                 aux_j--;
                 break;
             case LEFT_H:
-                auxMatrix = H;
+                auxMatrix = I_direction;
                 aux_j--;
                 break;
             case LEFT_B:
-                auxMatrix = B;
+                auxMatrix = B_direction;
                 aux_j--;
                 break;
             case LEFT_C:
-                auxMatrix = C;
+                auxMatrix = C_direction;
                 aux_j--;
                 break;
             case NONE:
@@ -948,6 +949,7 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
 
     int str_index = count - 1;
     temp = 0;
+    printf("Filled gaps\n");
     while (seq_w_size - temp >= i + 1) {
         string_alignment.v_string[str_index] = '-';
         string_alignment.w_string[str_index] = seq_w[seq_w_size - temp - 1];
@@ -974,28 +976,28 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
     }
 
     while (i >= 0 && j >= 0) {
-        switch (currentMatrix[aux_i][aux_j]) {
+        switch (currentMatrix[i][j]) {
             case TOP_LEFT:
                 string_alignment.v_string[str_index] = seq_v[j - 1] = seq_v[j - 1];
                 string_alignment.w_string[str_index] = seq_w[i - 1];
                 i--;
                 j--;
             case TOP_LEFT_H:
-                currentMatrix = H;
+                currentMatrix = I_direction;
                 string_alignment.v_string[str_index] = seq_v[j - 1] = seq_v[j - 1];
                 string_alignment.w_string[str_index] = seq_w[i - 1];
                 i--;
                 j--;
                 break;
             case TOP_LEFT_B:
-                currentMatrix = B;
+                currentMatrix = B_direction;
                 string_alignment.v_string[str_index] = seq_v[j - 1] = seq_v[j - 1];
                 string_alignment.w_string[str_index] = seq_w[i - 1];
                 i--;
                 j--;
                 break;
             case TOP_LEFT_C:
-                currentMatrix = B;
+                currentMatrix = B_direction;
                 string_alignment.v_string[str_index] = seq_v[j - 1] = seq_v[j - 1];
                 string_alignment.w_string[str_index] = seq_w[i - 1];
                 i--;
@@ -1007,19 +1009,19 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
                 i--;
                 break;
             case TOP_H:
-                currentMatrix = H;
+                currentMatrix = I_direction;
                 string_alignment.v_string[str_index] = '-';
                 string_alignment.w_string[str_index] = seq_w[i - 1];
                 i--;
                 break;
             case TOP_B:
-                currentMatrix = B;
+                currentMatrix = B_direction;
                 string_alignment.v_string[str_index] = '-';
                 string_alignment.w_string[str_index] = seq_w[i - 1];
                 i--;
                 break;
             case TOP_C:
-                currentMatrix = C;
+                currentMatrix = C_direction;
                 string_alignment.v_string[str_index] = '-';
                 string_alignment.w_string[str_index] = seq_w[i - 1];
                 i--;
@@ -1030,13 +1032,13 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
                 j--;
                 break;
             case LEFT_H:
-                currentMatrix = H;
+                currentMatrix = I_direction;
                 string_alignment.v_string[str_index] = seq_v[j - 1];
                 string_alignment.w_string[str_index] = '-';
                 j--;
                 break;
             case LEFT_B:
-                currentMatrix = B;
+                currentMatrix = B_direction;
                 string_alignment.v_string[str_index] = seq_v[j - 1];
                 string_alignment.w_string[str_index] = '-';
                 j--;
@@ -1044,6 +1046,10 @@ void getAlignmentBlock(enum GAP_TYPE v_type, enum GAP_TYPE w_type) {
             case LEFT_C:
                 string_alignment.v_string[str_index] = seq_v[j - 1];
                 string_alignment.w_string[str_index] = '-';
+                j--;
+                break;
+            case NONE:
+                i--;
                 j--;
                 break;
         }
